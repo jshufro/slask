@@ -13,3 +13,4 @@ slask.egg-info/
 .DS_Store
 .coverage
 conf.py
+.tox
