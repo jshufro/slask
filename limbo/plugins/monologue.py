@@ -16,9 +16,8 @@ def get_name(string):
             return COMEDIAN_NAMES[name]
 
 
-def monologue(msg):
+def monologue(text):
     """!monologue: joke from night shows """
-    text = msg.get("text", "")
     match = re.match(r"!monologue", text)
     if not match:
         return False
@@ -41,8 +40,7 @@ def monologue(msg):
     return monologue + ' --' + name
 
 
-def hedberg_joke(msg):
-    text = msg.get("text", "")
+def hedberg_joke(text):
     match = re.match(r"!hedberg", text)
     if not match:
         return False
@@ -55,5 +53,6 @@ def hedberg_joke(msg):
 
 
 def on_message(msg, server):
-    return monologue(msg) or hedberg_joke(msg)
+    text = msg.get("text", "")
+    return monologue(text) or hedberg_joke(text)
 
