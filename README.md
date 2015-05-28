@@ -1,37 +1,49 @@
-# Slask
+# Limbo
 ### A [Slack](https://slack.com/) chatbot
+
+![](https://travis-ci.org/llimllib/limbo.svg?branch=master)
 
 ## Installation
 
 1. Clone the repo
-2. `pip install -r requirements.txt`
-3. Host the web app (a sample wsgi.py is included. See [here](http://flask.pocoo.org/docs/deploying/#deployment) for more on deployment)
-4. Add the URL where you deployed the web app as an [outgoing webhook](https://my.slack.com/services/new/outgoing-webhook). Here's what my configuration looks like:
-![Here's what my configuration looks like](http://i.imgur.com/k3LZrBJ.png)
-5. That's it! Try typing `!gif dubstep cat` into a chat room monitored by slask
+2. [Create a bot user](https://my.slack.com/services/new/bot) if you don't have one yet, and copy the API Token
+3. export SLACK_TOKEN="your-api-token"
+4. `make run` (or `make repl` for local testing)
+5. Invite Limbo into any channels you want it in, or just message it in #general. Try typing `!gif dubstep cat` to test it out
 
 ![kitten mittens](http://i.imgur.com/xhmD6QO.png)
 
-## Heroku
-
-You can host for free on [Heroku](http://heroku.com). Sign up and follow the steps below to deploy the app.
-
-```bash
-heroku create
-git push heroku master
-heroku ps:scale web=1
-heroku ps
-heroku logs
-```
-
 ## Commands
-
-Right now, `!gif`, `!image`, `!youtube` and `!wiki` are the only available commands.
 
 It's super easy to add your own commands! Just create a python file in the plugins directory with an `on_message` function that returns a string.
 
+You can use the `!help` command to print out all available commands and a brief help message about them. `!help <plugin>` will return just the help for a particular plugin.
+
+These are the current default plugins:
+
+* [calc](https://github.com/llimllib/limbo/wiki/Calc-Plugin)
+* [emoji](https://github.com/llimllib/limbo/wiki/Emoji-Plugin)
+* [flip](https://github.com/llimllib/limbo/wiki/Flip-Plugin)
+* [gif](https://github.com/llimllib/limbo/wiki/Gif-Plugin)
+* [google](https://github.com/llimllib/limbo/wiki/Google-Plugin)
+* [help](https://github.com/llimllib/limbo/wiki/Help-Plugin)
+* [image](https://github.com/llimllib/limbo/wiki/Image-Plugin)
+* [map](https://github.com/llimllib/limbo/wiki/Map-Plugin)
+* [stock](https://github.com/llimllib/limbo/wiki/Stock-Plugin)
+* [stockphoto](https://github.com/llimllib/limbo/wiki/Stock-Photo-Plugin)
+* [weather](https://github.com/llimllib/limbo/wiki/Weather-Plugin)
+* [wiki](https://github.com/llimllib/limbo/wiki/Wiki-Plugin)
+* [youtube](https://github.com/llimllib/limbo/wiki/Youtube-Plugin)
+
+---
 
 ## Contributors
 
-* @fsalum
-* @rodvodka
+* [@fsalum](https://github.com/fsalum)
+* [@rodvodka](https://github.com/rodvodka)
+* [@mattfora](https://github.com/mattfora)
+* [@dguido](https://github.com/dguido)
+* [@JoeGermuska](https://github.com/JoeGermuska)
+* [@MathyV](https://github.com/MathyV)
+* [@stopspazzing](https://github.com/stopspazzing)
+* [@noise](https://github.com/noise)

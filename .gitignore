@@ -1,0 +1,14 @@
+.env
+venv/
+*.pyc
+config.py
+*.config.py
+limbo.sqlite3
+limbo.egg-info
+Makefile.local
+NOTES
+build/
+dist/
+slask.egg-info/
+.DS_Store
+.coverage

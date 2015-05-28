@@ -1,1 +1,1 @@
-web: gunicorn slask:app
+worker: python bin/limbo
