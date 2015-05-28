@@ -1,7 +1,7 @@
 import re, requests
 from requests.auth import HTTPBasicAuth
 
-from optbot import conf
+import conf
 nagios_user = conf.nagios_user
 nagios_pass = conf.nagios_pass
 
@@ -35,7 +35,6 @@ def set_downtime(text):
         return "Downtime set"
     else:
         return "Problem - look at check_mk"
-set_downtime._is_response = True
 
 
 def opt_status(text):
@@ -60,6 +59,7 @@ def opt_status(text):
     if not reply:
         return "But Nagios ain't one"
     return '\n' + reply
+
 
 def on_message(msg, server):
     text = msg.get("text", "")

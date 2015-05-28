@@ -1,11 +1,10 @@
 import wolframalpha
 import re
 
-import google_search
-
 APP_ID = "468AA5-HPV64AY622"
 client = wolframalpha.Client(APP_ID)
-# group match, match(0) is the whole body, match(1) is what in the first ()
+
+
 def wolfram_response(text):
     """!what|!why|!which|!who|!where|!when!how: just give you an answer"""
     match = re.match(r"(^!what|!why|!which|!who|!where|!when|!how) (.*)", text)
@@ -23,6 +22,7 @@ def ask_response(text):
     return wolfram_it(query)
 ask_response._is_response = True
 
+
 def wolfram_it(query):
     result = client.query(query)
     response = ''
@@ -38,14 +38,7 @@ def wolfram_it(query):
         return response
     elif interpreted_response:
         return interpreted_response
-    else:
-        return google_it(query)
 
-
-def google_it(query):
-    goog_body = {"body": "!google " + query}
-    goog_link = google_search.google_search(goog_body)
-    return "I don't know idiot, google it: " + goog_link
 
 def on_message(msg, server):
     text = msg.get("text", "")
