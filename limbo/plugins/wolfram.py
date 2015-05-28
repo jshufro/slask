@@ -23,6 +23,7 @@ def ask_response(text):
     return wolfram_it(query)
 
 
+
 def wolfram_it(query):
     result = client.query(query)
     response = ''
