@@ -15,8 +15,8 @@ def google(q):
     answer = soup.findAll("h3", attrs={"class": "r"})
     if not answer:
         return ":crying_cat_face: Sorry, google doesn't have an answer for you :crying_cat_face:"
+    return unquote(re.findall(r"q=(.*?)&", "\n".join(map(str, answer)))[0])
 
-    return unquote(re.findall(r"q=(.*?)&", str(answer[0]))[0])
 
 def on_message(msg, server):
     text = msg.get("text", "")

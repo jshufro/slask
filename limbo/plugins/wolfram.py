@@ -1,5 +1,6 @@
 import wolframalpha
 import re
+from google import google
 
 APP_ID = "468AA5-HPV64AY622"
 client = wolframalpha.Client(APP_ID)
@@ -20,7 +21,6 @@ def ask_response(text):
         return False
     query = match.group(1)
     return wolfram_it(query)
-ask_response._is_response = True
 
 
 def wolfram_it(query):
@@ -29,15 +29,16 @@ def wolfram_it(query):
     interpreted_response = ''
     for i in result.pods:
         if ('Input' in i.title):
-            interpreted_response = str(i.text)
+            interpreted_response = i.text
         elif i.text:
             response += i.text.replace(u'\xb0F', '')
             break
-
     if response:
         return response
     elif interpreted_response:
         return interpreted_response
+    else:
+        return "I don't know idiot, google it? " + google(query)
 
 
 def on_message(msg, server):
