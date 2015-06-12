@@ -22,3 +22,6 @@ wolframalpha
 jenkinsapi
 simplejson
 xkcd
+nltk
+pattern
+numpy
