@@ -10,7 +10,7 @@ import re
 from conf import goog_api_key
 
 
-BOUNDS = "40.740955,-73.998252"
+BOUNDS = "40.741869, -73.990950"
 
 
 def search(item=None):
