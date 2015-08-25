@@ -17,7 +17,9 @@ def on_message(msg, server):
     """!iou [cashout]: Show|cash out IOUs"""
     body = msg.get("text", "").lower()
 
-    match = re.match(r"thanks?\s+(you\s+)?gooby?(\s*\+(\d+))?", body)
+    match = re.match(r"thanks?\s+(you\s+)?gooby?(\s*\+(\d+))?",
+                     body,
+                     flags=re.IGNORECASE)
     if match:
         response = json.loads(server.slack.api_call("users.info", user=msg["user"]))
         from_ = response["user"]["profile"]["real_name"]
