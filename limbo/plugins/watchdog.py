@@ -36,10 +36,10 @@ def all_watchdog_status(body):
     url = "https://multimonitor.nym2.adnxs.net/check_mk/view.py?service=etl-optimization-watchdog&opthostgroup=&host=&view_name=servicedesc&st0=on&st1=on&st2=on&st3=on&stp=on&output_format=python"
     response = requests.get(url, auth=HTTPBasicAuth(nagios_user, nagios_pass), verify=False)
     data = eval(response.text)
-    output = "\n"
+    output = ""
     for i in data:
         output += "Host: {h}\tStatus: {s}\tDoge: {d}\n".format(h=i[1], s=i[0], d=i[2])
-    return output
+    return "```%s```" % output
 
 
 def watchdog_log(body):
@@ -48,7 +48,7 @@ def watchdog_log(body):
     match = reg.match(body)
     if not match:
         return False
-    host = match.group(1) 
+    host = match.group(1)
     try:
         int(host)
         host = "{}.bm-etl-optimization.prod.lax1".format(host)
