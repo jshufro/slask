@@ -12,7 +12,7 @@ def findroom_response(text):
     current_dt = \
         utc.localize(datetime.datetime.now()).astimezone(pytz.timezone('US/Eastern'))
     
-    match = re.match(r'!findroom ?(.{4})? ?(\d{2})? ?(\d{2}\:\d{2})? ?(\d{4}\-\d{2}\-\d{2})?', text, re.IGNORECASE)
+    match = re.match(r'!findroom ?(.{3,4})? ?(\d{2})? ?(\d{2}\:\d{2})? ?(\d{4}\-\d{2}\-\d{2})?', text, re.IGNORECASE)
     if not match:
         return False
 
