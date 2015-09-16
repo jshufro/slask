@@ -32,12 +32,6 @@ def findroom_response(text):
     
     duration = match.group(2) or 30
 
-
-    valid_floors = ['nyc2', 'nyc4']
-    
-    if floor not in valid_floors:
-        return "Invalid floor."
-    
     request = {'mode':'json', 'duration':duration, 'date':start_date, 'time':start_time, 'location':floor}
     result = requests.post('http://mmisiewicz.devnxs.net:7777/get_avail', data=simplejson.dumps(request))
     try:
