@@ -58,7 +58,7 @@ def opt_status(text):
                     msg=stat[2])
     if not reply:
         return "But Nagios ain't one"
-    return '\n' + reply
+    return '\n```' + reply + '```'
 
 
 def on_message(msg, server):
