@@ -49,12 +49,3 @@ def on_message(msg, server):
            age_to_string(find_latest_age(fetch_metrics(URL_BIDDER))),
            age_to_string(find_latest_age(fetch_metrics(URL_IMPBUS)))
     )
-
-
-bidder_age = fetch_metrics(URL_BIDDER)
-impbus_age = fetch_metrics(URL_IMPBUS)
-
-print '\n```BIDDER:\n%s \nIMPBUS:\n%s \n```' % (
-       age_to_string(find_latest_age(fetch_metrics(URL_BIDDER))),
-       age_to_string(find_latest_age(fetch_metrics(URL_IMPBUS)))
-       )
