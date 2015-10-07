@@ -1,3 +1,7 @@
+"""!doge city: Watchdog info for all hosts
+!such status <host>: Watchdog info for host
+!watchdog log <host>: tails the watchdog log for that host"""
+
 import subprocess
 import re
 import requests
@@ -11,12 +15,11 @@ nagios_pass = conf.nagios_pass
 
 
 def watchdog_status(body):
-    """!such status <host>: Watchdog info for host"""
     reg = re.compile('!such[\s|_]status (.*)', re.IGNORECASE)
     match = reg.match(body)
     if not match:
         return False
-    host = match.group(1) 
+    host = match.group(1)
     try:
         int(host)
         host = "{}.bm-etl-optimization.prod.lax1".format(host)
@@ -28,7 +31,6 @@ def watchdog_status(body):
 
 
 def all_watchdog_status(body):
-    """!doge city: Watchdog info for all hosts"""
     reg = re.compile('!doge[\s|_]city', re.IGNORECASE)
     match = reg.match(body)
     if not match:
@@ -43,7 +45,6 @@ def all_watchdog_status(body):
 
 
 def watchdog_log(body):
-    """!watchdog log <host>: tails the watchdog log for that host"""
     reg = re.compile('!watchdog log (.*)', re.IGNORECASE)
     match = reg.match(body)
     if not match:
@@ -62,4 +63,3 @@ def watchdog_log(body):
 def on_message(msg, server):
     text = msg.get("text", "")
     return watchdog_status(text) or all_watchdog_status(text) or watchdog_log(text)
-

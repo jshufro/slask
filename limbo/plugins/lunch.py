@@ -1,9 +1,7 @@
+"""!lunch|dinner menu: suggest a lunch menu"""
+
 import sys
-import os
 import json
-import csv
-import time
-import pickle
 import random
 import requests
 import re
@@ -29,9 +27,9 @@ def search(item=None):
     }
     result = requests.get(url, params=payload)
     return json.loads(result.text)
- 
+
+
 def on_message(msg, server):
-    """!lunch|dinner menu: suggest a lunch menu"""
     body = msg.get('text', '').lower()
     reg = re.compile('^!(lunch|dinner)(\s(\w+))?', re.IGNORECASE)
     match = reg.match(body)

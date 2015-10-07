@@ -1,3 +1,5 @@
+"""!haiku [x]: fetch haiku #x|random"""
+
 import re
 import random
 import conf
@@ -28,7 +30,7 @@ def count_syllables(word, verbose=False):
     for c in word:
         is_vowel = c in vowels
 
-        if on_vowel == None:
+        if on_vowel is None:
             on_vowel = is_vowel
 
         # y is a special case
@@ -98,7 +100,6 @@ def haiku(body):
 
 
 def haikyou(body):
-    """!haiku [x]: fetch haiku #x|random"""
     body = body.lower()
 
     match = re.match(r"!haiku(\s+(\d+))?", body)
@@ -114,5 +115,3 @@ def haikyou(body):
 def on_message(msg, server):
     text = msg.get("text", "")
     return haiku(text) or haikyou(text)
-
-

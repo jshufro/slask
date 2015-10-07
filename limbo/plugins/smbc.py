@@ -1,3 +1,5 @@
+"""!smbc (#|today|random)?: returns an smbc comic. default=random"""
+
 from bs4 import BeautifulSoup
 from math import floor
 from random import random
@@ -9,12 +11,10 @@ BASE_URL = "http://www.smbc-comics.com/"
 
 
 def smbc_response(text):
-    """!smbc (#|today|random)?: returns an smbc comic. default=random"""
     match = re.match(r"!smbc ?(\w+)? ?(\w+)?", text)
     if not match:
         return False
     option = match.group(1)
-    link = match.group(2)
 
     url = BASE_URL
     if not option or option == "random":

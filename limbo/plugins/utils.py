@@ -1,12 +1,18 @@
+"""X OR Y: let goob make all your important life decisions
+!date: UTC time
+!dt: UTC time
+!greeting: seasons greetings from goob
+!blame : what's your excuse?
+!ping: pong
+!budget query <X> : link to budget age metrics <for X hours> (defaults to 2)"""
+
 import re
 import random
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
-from itertools import islice
 
 def choose_one(body):
-    """X OR Y: simple decider"""
     reg = re.compile(r'(.*) OR (.*)')
     match = reg.match(body)
     if not match:
@@ -14,7 +20,6 @@ def choose_one(body):
     return random.choice([match.group(1), match.group(2)])
 
 def date_response(body):
-    """!date: UTC time """
     excuses = ["Sorry, I'm taken.",
                "You're nice, but not my type.",
                "I think I'm busy that day.",
@@ -27,7 +32,6 @@ def date_response(body):
     return random.choice(excuses)
 
 def greeting_response(body):
-    """!greeting: Receive a greeting from goob"""
     excuses = ["Why, hellooooo there.",
                "Hey, how you doin'? ;)",
                "Top o' the morning to ya, laddie.",
@@ -49,7 +53,6 @@ def greeting_response(body):
     return random.choice(excuses)
 
 def dt_response(body):
-    """!dt: UTC time """
     reg = re.compile('!dt', re.IGNORECASE)
     match = reg.match(body)
     if not match:
@@ -57,7 +60,6 @@ def dt_response(body):
     return datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S") + " UTC"
 
 def blame(body):
-    """!blame : what's your excuse?"""
     reg = re.compile('!blame', re.IGNORECASE)
     match = reg.match(body)
     if not match:
@@ -78,7 +80,6 @@ def pong(body):
     return "pong. http://www.ponggame.org/"
 
 def budget_query_age(body):
-    """!budget query <X> : link to budget age metrics <for X hours> (defaults to 2)"""
     reg = re.compile(r'!budget query\s?(?P<hours>\d+)?', re.IGNORECASE)
     match = reg.match(body)
     if not match:

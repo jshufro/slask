@@ -60,8 +60,7 @@ def init_plugins(plugindir):
                 hooks.setdefault(hook, []).append(hookfun)
 
             if mod.__doc__:
-                firstline = mod.__doc__.split('\n')[0]
-                hooks.setdefault('help', {})[modname] = firstline
+                hooks.setdefault('help', {})[modname] = mod.__doc__
                 hooks.setdefault('extendedhelp', {})[modname] = mod.__doc__
 
         # bare except, because the modules could raise any number of errors

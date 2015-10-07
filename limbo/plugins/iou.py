@@ -1,3 +1,5 @@
+"""!iou [cashout]: Show|ca$h out goob IOUs"""
+
 import re
 import logging
 import conf
@@ -43,7 +45,6 @@ PREFIX = "optimization@conference.appnexus.com"
 
 
 def on_message(msg, server):
-    """!iou [cashout]: Show|cash out IOUs"""
     body = msg.get("text", "").lower()
 
     match = re.match(r"thanks?\s+(you\s+)?gooby?(\s*\+(\d+))?",

@@ -70,7 +70,7 @@ def schedule(query):
             dt = datetime.strptime("{0} {1} {2}".format(rawdt, yr, time), "%a, %b %d %Y %I:%M %p")
         except ValueError:
             # some games are TBA
-            dt = datetime.strptime(dt, "%a, %b %d")
+            dt = datetime.strptime(rawdt, "%a, %b %d")
         # away games come as @, which is fine. Home games should have the
         # leading "vs" stripped
         opp = rawopp.lstrip("vs")

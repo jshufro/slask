@@ -1,3 +1,5 @@
+"""!meme <template> <up>/<down>: only denk memes"""
+
 import re
 import requests
 import json

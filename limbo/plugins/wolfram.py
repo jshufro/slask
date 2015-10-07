@@ -1,3 +1,6 @@
+"""!ask: ask goob a question
+!what|!why|!which|!who|!where|!when!how: just give you an answer"""
+
 import wolframalpha
 import re
 from google import google
@@ -7,21 +10,19 @@ client = wolframalpha.Client(APP_ID)
 
 
 def wolfram_response(text):
-    """!what|!why|!which|!who|!where|!when!how: just give you an answer"""
     match = re.match(r"(^!what|!why|!which|!who|!where|!when|!how) (.*)", text)
     if not match:
         return False
     query = match.group(0).replace('!', '')
     return wolfram_it(query)
 
+
 def ask_response(text):
-    """!ask: ask the magic guru a question."""
     match = re.match(r"!ask (.*)", text)
     if not match:
         return False
     query = match.group(1)
     return wolfram_it(query)
-
 
 
 def wolfram_it(query):
@@ -45,4 +46,3 @@ def wolfram_it(query):
 def on_message(msg, server):
     text = msg.get("text", "")
     return wolfram_response(text) or ask_response(text)
-

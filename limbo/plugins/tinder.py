@@ -1,3 +1,9 @@
+"""!tinder: hook me up, goob bro!
+!tinder auth link: do this first
+!swipe left: duh
+!swipe right: nuh
+!next photo: tiger milf"""
+
 import json
 import re
 import requests

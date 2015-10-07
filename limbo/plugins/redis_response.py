@@ -1,3 +1,8 @@
+"""!hashtag <hashtag> : get all messages tagged
+!clear <hashtag> : delete that hashtag
+!roulette: prints out a random tag
+!alltags : all the tags"""
+
 import re
 import cgi
 import random
@@ -6,14 +11,13 @@ import conf
 
 
 R = redis.StrictRedis(host=conf.redis_host, port=conf.redis_port, db=conf.redis_db)
-PREFIX = 'optbot:' #redis key namespace for opt-bot
+PREFIX = 'optbot:'  # redis key namespace for opt-bot
 MARKED_KEY_PREFIX = 'opt:'
 DOGE_KEY = "doge_mode"
 
 # key-value functions
 
 def R_set_response(msg):
-    """!set key value | get key | show regex: kv store commands"""
     if msg.startswith('!set '):
         args = msg.split()
         if len(args) != 3:
@@ -56,7 +60,6 @@ def store_marked_msg(msg):
     return "Stored under tag \"{}\"".format(tag)
 
 def get_marked_msg(msg):
-    """!hashtag <hashtag> : get all messages tagged"""
     match = re.match(r'!(hashtag )?(.*)', msg, re.IGNORECASE)
     if not match:
         return False
@@ -65,7 +68,6 @@ def get_marked_msg(msg):
     return "\n".join(messages)
 
 def clear_hashtag(msg):
-    """!clear <hashtag> : delete that hashtag"""
     match = re.match(r'!clear (.*)', msg, re.IGNORECASE)
     if not match:
         return False
@@ -73,14 +75,12 @@ def clear_hashtag(msg):
     return str(R.delete(key))
 
 def get_all_hashtags(msg):
-    """!alltags"""
     if not re.match(r'!alltags', msg, re.IGNORECASE):
         return False
     keys = R.keys(MARKED_KEY_PREFIX + '*')
     return "\n".join(map(lambda x : x.replace(MARKED_KEY_PREFIX, ''), keys))
 
 def roulette(msg):
-    """!roulette: prints out a random tag"""
     if not re.match(r'!roulette', msg, re.IGNORECASE):
         return False
 
@@ -106,4 +106,3 @@ def on_message(msg, server):
         response = fn(text)
         if response:
             return response
-

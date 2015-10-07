@@ -1,7 +1,4 @@
-"""
-Replace every noun in a text with the seventh noun after it in a dictionary.
-http://en.wikipedia.org/wiki/Oulipo
-"""
+"""!n+7: perform an n+7 (or any other integer) transformation on text"""
 
 import nltk
 import random
@@ -20,16 +17,21 @@ class Cache():
             index += 1
     words = OrderedDict(entries)
 
+
 prev_msg = ""
 
+
 def n_plus_transform(body):
-    """!n+7: perform an n+7 (or any other integer) transformation on text"""
+    """
+    Replace every noun in a text with the seventh noun after it in a dictionary.
+    http://en.wikipedia.org/wiki/Oulipo
+    """
     reg = re.compile('!n\+(\d+)\s*(.*)', re.IGNORECASE)
     match = reg.match(body)
 
     global prev_msg
     if not match:
-        #Maintain last seen message.
+        # Maintain last seen message.
         prev_msg = body
         return False
 
@@ -48,34 +50,34 @@ def n_plus_transform(body):
 
     for pos_tag in pos_tags:
         word = pos_tag[0]
-        #If a noun...
+        # If a noun...
         if pos_tag[1].startswith("N"):
-            #Before looking up the noun, get rid of inflection.
+            # Before looking up the noun, get rid of inflection.
             word = lemmatizer.lemmatize(word)
             idx = Cache.words.get(word)
-            #If noun is not found in the dictionary...
+            # If noun is not found in the dictionary...
             if idx is None:
-                #...try lowercase
+                # ...try lowercase
                 idx = Cache.words.get(word.lower())
                 if idx is None:
-                    #...try capitalizing
+                    #  ...try capitalizing
                     idx = Cache.words.get(word.capitalize())
                     if idx is None:
-                        #...find a random replacement.
-                        idx = random.randint(0, len(Cache.words)-1)
+                        # ...find a random replacement.
+                        idx = random.randint(0, len(Cache.words) - 1)
             idx += word_offset
             if idx >= len(Cache.words):
                 idx %= len(Cache.words)
             word = Cache.words.keys()[idx]
-            #Try to retain number
+            # Try to retain number
             if pos_tag[1] == "NNS" or pos_tag[1] == "NNPS":
                 word = pattern.en.pluralize(word)
-            #Retain capitalization
+            # Retain capitalization
             if pos_tag[0][0].isupper():
                 word = word.capitalize()
-        #Build the new message.
-        #No space if (1) first word, (2) preceded by hashtag,
-        #or (3) punctuation.
+        # Build the new message.
+        # No space if (1) first word, (2) preceded by hashtag,
+        # or (3) punctuation.
         if not out \
                 or out.endswith("#") \
                 or do_not_prepend_with_space.match(word):
@@ -85,7 +87,7 @@ def n_plus_transform(body):
 
     return out
 
+
 def on_message(msg, server):
     text = msg.get("text", "")
     return n_plus_transform(text)
-

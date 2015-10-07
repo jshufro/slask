@@ -1,4 +1,8 @@
-import requests, re, random
+"""!monologue: joke from night shows """
+
+import requests
+import re
+import random
 from bs4 import BeautifulSoup
 
 
@@ -17,7 +21,6 @@ def get_name(string):
 
 
 def monologue(text):
-    """!monologue: joke from night shows """
     match = re.match(r"!monologue", text)
     if not match:
         return False
@@ -55,4 +58,3 @@ def hedberg_joke(text):
 def on_message(msg, server):
     text = msg.get("text", "")
     return monologue(text) or hedberg_joke(text)
-

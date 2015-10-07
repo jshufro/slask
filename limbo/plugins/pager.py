@@ -1,9 +1,10 @@
+"""!oncall|!pager (add "link" for url to pager rotation page)"""
+
 import re
 import urllib2
 import json
 
 def pager_response(text):
-    """!oncall|!pager (add "link" for url to pager rotation page)"""
     match = re.match('!oncall|!pager', text, re.IGNORECASE)
     if not match:
         return False
@@ -76,4 +77,3 @@ def maestro_pager_response():
 def on_message(msg, server):
     text = msg.get("text", "")
     return pager_response(text)
-

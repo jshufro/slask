@@ -1,6 +1,3 @@
-"""Log all messages to the database
-
-Only active if the LIMBO_LOG_EVERYTHING environment variable is set"""
 import os
 
 DO_LOG = os.environ.get("LIMBO_LOG_EVERYTHING", False)

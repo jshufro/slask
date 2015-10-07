@@ -1,3 +1,5 @@
+"""!findroom (optional floor, nyc2|nyc4, default nyc2) (duration, optional, default 30) (optional meeting start time, default at the next half hour) (optional meeting date, default today): finds available conference rooms in eastern time"""
+
 import simplejson
 import requests
 import re
@@ -6,8 +8,6 @@ import pytz
 
 
 def findroom_response(text):
-    """!findroom (optional floor, nyc2|nyc4, default nyc2) (duration, optional, default 30) (optional meeting start time, default at the next half hour) (optional meeting date, default today): finds available conference rooms in eastern time"""
-
     utc = pytz.utc
     current_dt = \
         utc.localize(datetime.datetime.now()).astimezone(pytz.timezone('US/Eastern'))

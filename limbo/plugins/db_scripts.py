@@ -1,18 +1,20 @@
+"""!job cache <failed>: show cached/running jobs <recent failed jobs>
+!last[ jobs] [X=5] [handler]: last X scheduled jobs
+!scheduler log <querystring> : grep scheduler log
+!host <number|host_name> : list tasks running on host
+!job logs <job_id> : logs for all tasks of this job
+!task logs <task_id>: fetch task logs
+!tasks [running|completed|failed|queued|killed] <job_id>: task statuses for job"""
+
 import subprocess
 import re
-import random
-
-import json
-import requests
-from requests.auth import HTTPDigestAuth
 import conf
+
 
 DB = 'mysql -A -u%s -p%s -hmysql-budget-slave.prod.adnxs.net -D optimization' % (conf.db_user, conf.db_pass)
 
 
 def job_cache(body):
-    """!job_cache <failed>: show cached jobs <recent failed jobs>"""
-
     query = """select id, job_id, handler, insert_time
                 from work_queue_job_cache
                 where deleted = 0;"""
@@ -32,18 +34,16 @@ def job_cache(body):
 
 
 def tasks(body):
-    """!tasks [running|completed|failed|queued|killed] <job_id>: task statuses for job"""
-
     query = """select work_task_id, host, status, insert_time, start_time,
                 completion_time, if(status = 'completed', timediff(completion_time,
-                start_time), timediff(now(), start_time)) as total 
+                start_time), timediff(now(), start_time)) as total
                 from work_queue_task
                 where job_id = %s;"""
 
     exp = re.compile(r'^!tasks\s+((?P<type>\w+)\s+)?(?P<id>\d+)\s*$')
     match = exp.match(body.lower())
     if match:
-        states = ('queued','running','failed','killed','completed')
+        states = ('queued', 'running', 'failed', 'killed', 'completed')
         type_ = match.group('type')
         if type_ not in states:
             type_ = None
@@ -56,8 +56,6 @@ def tasks(body):
 
 
 def host_tasks(body):
-    """!host <number> OR <host_name> : tasks running on that host"""
-
     query = """select job_id, work_task_id, handler, t.insert_time, t.start_time,
             timediff(now(), t.start_time) as total
             from work_queue_task t, work_queue_job j
@@ -82,10 +80,8 @@ def host_tasks(body):
     return "```" + result + "```"
 
 
-
 def last_run_jobs(body):
-    """!last jobs <X> <handler>: last X jobs (handler optional)"""
-    reg = re.compile('^!last jobs\s?((?P<num>\d+))?\s?((?P<handler>\w+))?', re.IGNORECASE)
+    reg = re.compile('^!last\s+(jobs\s+)?((?P<num>\d+))?\s?((?P<handler>\w+))?$', re.IGNORECASE)
     match = reg.match(body)
     if not match:
         return False
@@ -94,10 +90,10 @@ def last_run_jobs(body):
     # see if specific job type
     handler = match.group('handler') or ''
 
-    query = """SELECT id as job_id, handler, status, insert_time, start_time, 
-                    completion_time, 
+    query = """SELECT id as job_id, handler, status, insert_time, start_time,
+                    completion_time,
                     IF(completion_time <> '0000-00-00 00:00:00',
-                        timediff(completion_time, start_time), 
+                        timediff(completion_time, start_time),
                         'ITS RUNNING FOOL') as run_time
                FROM work_queue_job
                WHERE handler like '%{}%'
@@ -109,7 +105,6 @@ def last_run_jobs(body):
     return "```" + result + "```"
 
 
-
 def host_for_task(task):
     query = "SELECT host FROM work_queue_task WHERE work_task_id = %s" % task
     command_str = 'echo "' + query + '" | ' + DB
@@ -117,21 +112,17 @@ def host_for_task(task):
     return result.split()[-1]
 
 
-
 def get_task_log(task_id):
     url = "http://analytics.prod.adnxs.net/work_queue/task_logs/%s" % task_id
     return url
 
 
-
 def task_logs(body):
-    """!task_logs <task_id>: fetch task logs"""
     reg = re.compile('!task[\s|_]logs (.*)', re.IGNORECASE)
     match = reg.match(body)
     if match:
         task_id = match.group(1)
         return get_task_log(task_id)
-
 
 
 def tasks_for_job(job_id):
@@ -141,9 +132,7 @@ def tasks_for_job(job_id):
     return result.split('\n')[1:-1]
 
 
-
 def job_logs(body):
-    """!job logs <job_id> : all logs for all tasks of this job"""
     reg = re.compile("!job logs (.*)", re.IGNORECASE)
     match = reg.match(body)
     if not match:
@@ -153,13 +142,11 @@ def job_logs(body):
     urls = []
     for task_id in task_info:
         url = get_task_log(task_id)
-        urls.append(task_id + ": " +  url)
+        urls.append(task_id + ": " + url)
     return "```" + "\n".join(urls) + "```"
 
 
-
 def grep_scheduler_log(body):
-    """!scheduler log <querystring> : grep scheduler log"""
     reg = re.compile('!scheduler log (.*)', re.IGNORECASE)
     match = reg.match(body)
     if not match:
@@ -184,4 +171,3 @@ def on_message(msg, server):
         response = fn(text)
         if response:
             return response
-

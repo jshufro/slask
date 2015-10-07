@@ -1,21 +1,19 @@
-__author__ = "Kevin Hsu (khsu@appnexus.com)"
+# -*- coding: utf-8 -*-
+"""!budget: show budget age"""
 
 import requests
 import re
 import json
-from datetime import datetime
-import os, json
 import conf
 
 username = conf.appnexus_user
 password = conf.appnexus_pass
-# DCS = ('nym1', 'nym2', 'lax1', 'ams1', 'sin1', 'fra1')
 URL_BIDDER = 'https://metrics.adnxs.net/render?from=-30minutes&until=now&target=clusters.prod.bidderc.*.budget.age_seconds&format=json'
 URL_IMPBUS = 'https://metrics.adnxs.net/render?from=-30minutes&until=now&target=clusters.prod.impbus.*.budget.age_seconds&format=json'
 
 def find_latest_age(metrics):
     i = -1
-    dc_age  = {}
+    dc_age = {}
     for dc, metric in metrics.iteritems():
         age = None
         while age is None:
@@ -26,7 +24,7 @@ def find_latest_age(metrics):
 
 def fetch_metrics(url):
     metrics = {}
-    ret = requests.get(url, auth =(username, password))
+    ret = requests.get(url, auth=(username, password))
     ret = json.loads(ret.content)
 
     for data in ret:
@@ -35,10 +33,9 @@ def fetch_metrics(url):
     return metrics
 
 def age_to_string(dc_age):
-    return '\n'.join(['%4s: %5d seconds  %s' % (dc, age, '.'* int(age/600)) for dc, age in dc_age.iteritems()])
+    return '\n'.join(['%4s: %5d seconds  %s' % (dc, age, '.' * int(age / 600)) for dc, age in dc_age.iteritems()])
 
 def on_message(msg, server):
-    """!budget: show budget age"""
     text = msg.get("text", "")
     reg = re.compile('!budget', re.IGNORECASE)
     match = reg.match(text)
