@@ -24,7 +24,7 @@ def findroom_response(text):
         target_minutes = 30-current_dt.minute # start at the next :30 otherwise
 
     # parse args
-    floor = match.group(1) or 'nyc2'
+    floor = match.group(1) or 'nyc4'
     start_date = match.group(4) or current_dt.strftime('%Y-%m-%d')
     start_time = match.group(3) or (current_dt + datetime.timedelta(minutes=target_minutes)).strftime('%H:%M:00')
     if match.group(3) != None:
