@@ -47,7 +47,7 @@ PREFIX = "optimization@conference.appnexus.com"
 def on_message(msg, server):
     body = msg.get("text", "").lower()
 
-    match = re.match(r"thanks?\s+(you\s+)?gooby?(\s*\+(\d+))?",
+    match = re.match(r"(d(a|e)nks|thx|thanks?)\s+(you\s+)?gooby?(\s*\+(\d+))?",
                      body,
                      flags=re.IGNORECASE)
     if match:
