@@ -23,6 +23,8 @@ PYTHON3 = sys.version_info[0] > 2
 
 logger = logging.getLogger(__name__)
 
+MAX_RECURSION = 3
+
 class InvalidPluginDir(Exception):
     def __init__(self, plugindir):
         self.message = "Unable to find plugin dir {0}".format(plugindir)
@@ -87,6 +89,17 @@ def run_hook(hooks, hook, *args):
 
     return responses
 
+def handle_recursion(event, server, recurses, newText):
+    if recurses >= MAX_RECURSION:
+        return []
+    event.set("text", newText)
+    responseInitial = run_hook(server.hooks, "message", event, server)
+    response = ["\n".join(responseInitial)] + \
+            [item for sublist in [handle_recursion(copy.deepcopy(event), \
+            server, recurses+1, x) for x in responseInitial] \
+            for item in sublist]
+    return response
+
 def handle_message(event, server):
     # ignore bot messages and edits
     subtype = event.get("subtype", "")
@@ -105,7 +118,9 @@ def handle_message(event, server):
     if msguser.name == botname or msguser.name.lower() == "slackbot":
         return
 
-    return "\n".join(run_hook(server.hooks, "message", event, server))
+    response = handle_recursion(event, server, 0, event.get("text"))
+
+    return response
 
 event_handlers = {
     "message": handle_message,
@@ -139,7 +154,8 @@ def loop(server):
                 logger.debug("got {0}".format(event.get("type", event)))
                 response = handle_event(event, server)
                 if response:
-                    server.slack.rtm_send_message(event["channel"], response)
+                    for message in response:
+                        server.slack.rtm_send_message(event["channel"], message)
 
             time.sleep(1)
     except KeyboardInterrupt:
