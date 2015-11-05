@@ -113,7 +113,10 @@ def handle_message(event, server):
         return
 
     botname = server.slack.server.login_data["self"]["name"]
-    msguser = server.slack.server.users.find(event["user"])
+    try:
+        msguser = server.slack.server.users.find(event["user"])
+    except KeyError:
+        msguser = None
 
     # slack returns None if it can't find the user because it thinks it's ruby
     if not msguser:
