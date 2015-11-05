@@ -8,6 +8,15 @@ except ImportError:
 import re
 import requests
 import time
+import logging
+from conf import goog_api_key, openweather_appid
+
+LOG = logging.getLogger(__name__)
+
+DEFAULT = {
+    "lat": 40.741869,
+    "lng": -73.990950
+}
 
 # http://openweathermap.org/weather-conditions
 iconmap = {
@@ -23,11 +32,36 @@ iconmap = {
 }
 
 def weather(searchterm):
-    searchterm = quote(searchterm)
-    url = 'http://api.openweathermap.org/data/2.5/forecast/daily?q={0}&cnt=5&mode=json&units=imperial'
-    url = url.format(searchterm)
+    LOG.info("searchterm={0}".format(searchterm))
+    location = None
+    if not searchterm:
+        location = DEFAULT
+    else:
+        searchterm = quote(searchterm)
+        try:
+            url = "https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}"
+            response = requests.get(url.format(searchterm, goog_api_key))
+            try:
+                location = response.json()["results"][0]["geometry"]["location"]
+            except:
+                LOG.warn("Invalid geocoding API response: {0}".format(response.text),
+                         exc_info=1)
+        except:
+            LOG.warn("Could not geocode location", exc_info=1)
 
-    dat = requests.get(url).json()
+    if location:
+        method = "lat={0}&lon={1}".format(location["lat"], location["lng"])
+    else:
+        method = "q={0}".format(searchterm)
+
+    url = 'http://api.openweathermap.org/data/2.5/forecast/daily?{0}&cnt=5&mode=json&units=imperial&APPID={1}'
+    url = url.format(method, openweather_appid)
+
+    dat = requests.get(url)
+    try:
+        dat = dat.json()
+    except:
+        LOG.warn(dat.text, exc_info=1)
 
     msg = ["{0}: ".format(dat["city"]["name"])]
     for day in dat["list"]:
@@ -40,7 +74,7 @@ def weather(searchterm):
 
 def on_message(msg, server):
     text = msg.get("text", "")
-    match = re.findall(r"!weather (.*)", text)
+    match = re.findall(r"!weather(.*)", text)
     if not match:
         return
 
