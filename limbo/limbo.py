@@ -24,6 +24,8 @@ PYTHON3 = sys.version_info[0] > 2
 logger = logging.getLogger(__name__)
 
 MAX_RECURSION = 3
+#these strings will not be processed by goob when sent by goob
+NO_RECURSE_STRINGS = ['!help']
 
 class InvalidPluginDir(Exception):
     def __init__(self, plugindir):
@@ -92,11 +94,15 @@ def run_hook(hooks, hook, *args):
 def handle_recursion(event, server, recurses, newText):
     if recurses >= MAX_RECURSION:
         return []
-    event.set("text", newText)
+    event['text'] = newText
     responseInitial = run_hook(server.hooks, "message", event, server)
+    recurseMessages = copy.deepcopy(responseInitial)
+    dontRun = lambda x: any([y in x for y in NO_RECURSE_STRINGS])
+    if recurses > 0:
+        recurseMessages = [x for x in recurseMessages if not dontRun(x)]
     response = ["\n".join(responseInitial)] + \
             [item for sublist in [handle_recursion(copy.deepcopy(event), \
-            server, recurses+1, x) for x in responseInitial] \
+            server, recurses+1, x) for x in recurseMessages] \
             for item in sublist]
     return response
 
