@@ -127,8 +127,8 @@ def handle_message(event, server):
     if msguser.name == botname or msguser.name.lower() == "slackbot":
         return
 
-    response = handle_recursion(event, server, 0, event.get("text"))
-
+    # response = handle_recursion(event, server, 0, event.get("text"))
+    response = "\n".join(run_hook(server.hooks, "message", event, server))
     return response
 
 event_handlers = {
@@ -163,8 +163,9 @@ def loop(server):
                 logger.debug("got {0}".format(event.get("type", event)))
                 response = handle_event(event, server)
                 if response:
-                    for message in response:
-                        server.slack.rtm_send_message(event["channel"], message)
+                    server.slack.rtm_send_message(event["channel"], response)
+                    # for message in response:
+                    #     server.slack.rtm_send_message(event["channel"], message)
 
             time.sleep(1)
     except KeyboardInterrupt:
