@@ -127,8 +127,22 @@ def handle_message(event, server):
     if msguser.name == botname or msguser.name.lower() == "slackbot":
         return
 
-    # response = handle_recursion(event, server, 0, event.get("text"))
-    response = "\n".join(run_hook(server.hooks, "message", event, server))
+    # grep functionality
+    if "| grep" in event['text']:
+        text = event['text']
+        components = event['text'].split('|')
+        source_query = components[0].rstrip()
+        event['text'] = source_query
+        initial_response = run_hook(server.hooks, "message", event, server)
+        initial_lines = [line for reeesponse in initial_response.split('\n') \
+            for line in reeesponse]
+        grep_string = components[1].split(' grep ')[1]
+        grepped_responses = [x for x in initial_lines if grep_string in x]
+        response = "\n".join(grepped_responses)
+
+    else:
+        # response = handle_recursion(event, server, 0, event.get("text"))
+        response = "\n".join(run_hook(server.hooks, "message", event, server))
     return response
 
 event_handlers = {
@@ -240,7 +254,8 @@ def main(args):
 # returns a string appropriate for printing (str in py2 and py3)
 def run_cmd(cmd, server, hook, pluginpath):
     server.hooks = init_plugins(pluginpath)
-    event = {'type': hook, 'text': cmd, "user": "msguser", 'ts': time.time(), 'team': None, 'channel': None}
+    event = {'type': hook, 'text': cmd, "user": "msguser", 'ts': time.time(),
+             'team': None, 'channel': None, 'unfurl_links': True}
     return encode(handle_event(event, server))
 
 # raw_input in 2.6 is input in python 3. Set `input` to the correct function

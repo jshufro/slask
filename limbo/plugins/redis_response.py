@@ -1,19 +1,18 @@
 """!hashtag <hashtag> : get all messages tagged
 !clear <hashtag> : delete that hashtag
 !roulette: prints out a random tag
-!alltags : all the tags"""
+!alltags <query>: all the tags, optionally with a search parameter"""
 
 import re
 import cgi
 import random
 import redis
-import conf
+from limbo import conf
 
 
 R = redis.StrictRedis(host=conf.redis_host, port=conf.redis_port, db=conf.redis_db)
 PREFIX = 'optbot:'  # redis key namespace for opt-bot
 MARKED_KEY_PREFIX = 'opt:'
-DOGE_KEY = "doge_mode"
 
 # key-value functions
 
@@ -49,14 +48,21 @@ def R_show_response(msg):
 
 # hashtag functions
 
+URL_REGEX = r'(.*)<(http.*)>(.*)'
+
 def store_marked_msg(msg):
     """[#/] picks up any message with a hashtag and stores it under that tag"""
-    match = re.match(r'(.*) [#/](?P<tag>\w+)\s?(.*)$', msg, re.IGNORECASE)
+    match = re.match(r'(.*) [#](?P<tag>\w+)\s?(.*)$', msg, re.IGNORECASE)
     if not match:
         return False
     tag = match.group('tag').lower()
     redis_tag = MARKED_KEY_PREFIX + tag
-    R.rpush(redis_tag, match.group(0))
+    message = match.group(0)
+    search = re.search(URL_REGEX, message)
+    while (search):
+        message = search.group(1) + search.group(2) + search.group(3)
+        search = re.search(URL_REGEX, message)
+    R.rpush(redis_tag, message)
     return "Stored under tag \"{}\"".format(tag)
 
 def get_marked_msg(msg):
@@ -75,19 +81,22 @@ def clear_hashtag(msg):
     return str(R.delete(key))
 
 def get_all_hashtags(msg):
-    if not re.match(r'!alltags', msg, re.IGNORECASE):
+    match = re.match(r'!alltags ?(.*)', msg, re.IGNORECASE)
+    if not match:
         return False
-    keys = R.keys(MARKED_KEY_PREFIX + '*')
+    query = '*' + match.group(1) + '*' if match.group(1) else '*'
+    keys = R.keys(MARKED_KEY_PREFIX + query)
     return "\n".join(map(lambda x : x.replace(MARKED_KEY_PREFIX, ''), keys))
 
 def roulette(msg):
     if not re.match(r'!roulette', msg, re.IGNORECASE):
         return False
 
-    #TODO replace with probability
-    key = MARKED_KEY_PREFIX + "generalazhang"
-    messages = R.lrange(key, 0, -1)
-    return "\n".join(messages)
+    zhang_prob = random.random()
+    if zhang_prob <= 0.3:
+        key = MARKED_KEY_PREFIX + "generalazhang"
+        messages = R.lrange(key, 0, -1)
+        return "\n".join(messages)
 
     keys = R.keys(MARKED_KEY_PREFIX + '*')
     key = random.choice(keys)

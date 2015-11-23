@@ -4,7 +4,7 @@
 import requests
 import re
 import json
-import conf
+from limbo import conf
 
 username = conf.appnexus_user
 password = conf.appnexus_pass

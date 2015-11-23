@@ -15,9 +15,10 @@ def get_users():
 
 def on_message(msg, server):
     body = msg.get('text', '').lower()
-    print body
-    reg = re.compile('^!summon\s(.*)?', re.IGNORECASE)
-    match = reg.match(body)
+    match = re.match(r'!summon\s(.*)', body, re.IGNORECASE)
+    if not match:
+        return False
+
     user = match.group(1).split()[0].strip('@').strip(':')
     email = '{}@appnexus.com'.format(user)
     if not match:

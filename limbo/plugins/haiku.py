@@ -2,7 +2,7 @@
 
 import re
 import random
-import conf
+from limbo import conf
 import logging
 from redis.client import StrictRedis
 

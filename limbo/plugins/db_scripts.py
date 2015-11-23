@@ -9,7 +9,7 @@
 from datetime import datetime, timedelta
 import subprocess
 import re
-import conf
+from limbo import conf
 
 
 DB = 'mysql -A -u%s -p%s -hmysql-budget-slave.prod.adnxs.net -D optimization' % (conf.db_user, conf.db_pass)

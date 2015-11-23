@@ -5,7 +5,7 @@ import re
 import requests
 from requests.auth import HTTPBasicAuth
 
-import conf
+from limbo import conf
 nagios_user = conf.nagios_user
 nagios_pass = conf.nagios_pass
 
