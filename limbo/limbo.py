@@ -134,8 +134,8 @@ def handle_message(event, server):
         source_query = components[0].rstrip()
         event['text'] = source_query
         initial_response = run_hook(server.hooks, "message", event, server)
-        initial_lines = [line for reeesponse in initial_response.split('\n') \
-            for line in reeesponse]
+        initial_lines = [line for reeesponse in initial_response \
+            for line in reeesponse.split('\n')]
         grep_string = components[1].split(' grep ')[1]
         grepped_responses = [x for x in initial_lines if grep_string in x]
         response = "\n".join(grepped_responses)
