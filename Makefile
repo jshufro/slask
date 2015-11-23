@@ -30,7 +30,7 @@ endif
 
 .PHONY: install
 install: requirements
-	python setup.py install
+	python setup.py develop
 	make clean
 
 .PHONY: publish
