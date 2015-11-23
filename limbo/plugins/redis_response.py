@@ -52,7 +52,7 @@ URL_REGEX = r'(.*)<(http.*)>(.*)'
 
 def store_marked_msg(msg):
     """[#/] picks up any message with a hashtag and stores it under that tag"""
-    match = re.match(r'(.*) [#/](?P<tag>\w+)\s?(.*)$', msg, re.IGNORECASE)
+    match = re.match(r'(.*) [#](?P<tag>\w+)\s?(.*)$', msg, re.IGNORECASE)
     if not match:
         return False
     tag = match.group('tag').lower()
