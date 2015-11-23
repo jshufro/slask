@@ -84,10 +84,11 @@ def roulette(msg):
     if not re.match(r'!roulette', msg, re.IGNORECASE):
         return False
 
-    #TODO replace with probability
-    key = MARKED_KEY_PREFIX + "generalazhang"
-    messages = R.lrange(key, 0, -1)
-    return "\n".join(messages)
+    zhang_prob = random.random()
+    if zhang_prob <= 0.3:
+        key = MARKED_KEY_PREFIX + "generalazhang"
+        messages = R.lrange(key, 0, -1)
+        return "\n".join(messages)
 
     keys = R.keys(MARKED_KEY_PREFIX + '*')
     key = random.choice(keys)
