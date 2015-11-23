@@ -18,3 +18,4 @@ conf.py
 slask.log
 slask.pid
 log
+.token
