@@ -12,7 +12,7 @@ clean:
 
 .PHONY: run
 run: install
-	bin/limbo
+	bin/limbo > slask.log 2>&1 & echo $$! > slask.pid
 
 .PHONY: repl
 repl: install
