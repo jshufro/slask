@@ -1,5 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 set -x
 echo "restarting GOOB"
 kill -TERM `cat slask.pid`
-source venv/bin/activate && echo `which pip` && make run
+source venv/bin/activate
+echo `which pip`
+make run
