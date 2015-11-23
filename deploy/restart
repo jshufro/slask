@@ -1,6 +1,5 @@
 #!/bin/sh
-touch tmp/restart.txt
 echo "restarting GOOB"
 kill -TERM `cat slask.pid`
-source venv/bin
+source venv/bin/activate
 make run
