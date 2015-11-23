@@ -1,7 +1,7 @@
 """!hashtag <hashtag> : get all messages tagged
 !clear <hashtag> : delete that hashtag
 !roulette: prints out a random tag
-!alltags : all the tags"""
+!alltags <query>: all the tags, optionally with a search parameter"""
 
 import re
 import cgi
