@@ -6,6 +6,7 @@
 !task logs <task_id>: fetch task logs
 !tasks [running|completed|failed|queued|killed] <job_id>: task statuses for job"""
 
+from datetime import datetime, timedelta
 import subprocess
 import re
 import conf
@@ -28,6 +29,33 @@ def job_cache(body):
                     FROM work_queue_job
                     WHERE status = 'failed' and insert_time >= (now() - interval 90 minute)
                     ORDER BY insert_time desc """
+    command_str = 'echo "' + query + '" | ' + DB
+    result = subprocess.check_output(command_str, shell=True)
+    return "```" + result + "```"
+
+
+def overspend(body):
+    reg = re.compile('!overspend (\d+)', re.IGNORECASE)
+    match = reg.match(body)
+    if not match:
+        return False
+    update_time = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+    query = """SELECT n.object_type_id, n.object_id,
+                    CASE overspend_type
+                        WHEN 1 THEN daily_budget
+                        ELSE daily_budget_imps
+                    END as daily_budget,
+                    CASE overspend_type
+                        WHEN 1 then delivered
+                        ELSE delivered_imps
+                    END as delivered,
+                    n.over_pct * 100
+                FROM budget_daily_overspend_v2 n
+                INNER JOIN (
+                  SELECT MAX(update_time) AS update_time
+                  FROM budget_daily_overspend_v2
+                  WHERE update_time >= '{0}'
+                ) AS max USING (update_time) order by flag desc limit {1};""".format(update_time, match.group(1))
     command_str = 'echo "' + query + '" | ' + DB
     result = subprocess.check_output(command_str, shell=True)
     return "```" + result + "```"
@@ -162,7 +190,7 @@ def grep_scheduler_log(body):
 
 
 ALL = [job_cache, tasks, host_tasks, last_run_jobs,
-       task_logs, job_logs, grep_scheduler_log]
+       task_logs, job_logs, grep_scheduler_log, overspend]
 
 
 def on_message(msg, server):
