@@ -15,3 +15,6 @@ slask.egg-info/
 conf.py
 .tox
 conf.py
+slask.log
+slask.pid
+log
