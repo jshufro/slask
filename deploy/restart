@@ -3,7 +3,7 @@ set -x
 echo "restarting GOOB"
 kill -TERM `cat slask.pid`
 source venv/bin/activate
-echo `which pip`
+echo `pwd`
 export SLACK_TOKEN="`cat .token`"
 export PYTHON_PATH=`pwd`:$PYTHON_PATH
 make run
