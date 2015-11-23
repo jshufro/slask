@@ -4,4 +4,4 @@ echo "restarting GOOB"
 kill -TERM `cat slask.pid`
 source venv/bin/activate
 echo `which pip`
-make run
+export SLACK_TOKEN=`cat .token` && make run
