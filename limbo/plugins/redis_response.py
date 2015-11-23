@@ -13,7 +13,6 @@ import conf
 R = redis.StrictRedis(host=conf.redis_host, port=conf.redis_port, db=conf.redis_db)
 PREFIX = 'optbot:'  # redis key namespace for opt-bot
 MARKED_KEY_PREFIX = 'opt:'
-DOGE_KEY = "doge_mode"
 
 # key-value functions
 
@@ -49,6 +48,8 @@ def R_show_response(msg):
 
 # hashtag functions
 
+URL_REGEX = r'(.*)<(http.*)>(.*)'
+
 def store_marked_msg(msg):
     """[#/] picks up any message with a hashtag and stores it under that tag"""
     match = re.match(r'(.*) [#/](?P<tag>\w+)\s?(.*)$', msg, re.IGNORECASE)
@@ -56,7 +57,12 @@ def store_marked_msg(msg):
         return False
     tag = match.group('tag').lower()
     redis_tag = MARKED_KEY_PREFIX + tag
-    R.rpush(redis_tag, match.group(0))
+    message = match.group(0)
+    search = re.search(URL_REGEX, message)
+    while (search):
+        message = search.group(1) + search.group(2) + search.group(3)
+        search = re.search(URL_REGEX, message)
+    R.rpush(redis_tag, message)
     return "Stored under tag \"{}\"".format(tag)
 
 def get_marked_msg(msg):
