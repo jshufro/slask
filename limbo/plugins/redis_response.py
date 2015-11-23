@@ -81,9 +81,11 @@ def clear_hashtag(msg):
     return str(R.delete(key))
 
 def get_all_hashtags(msg):
-    if not re.match(r'!alltags', msg, re.IGNORECASE):
+    match = re.match(r'!alltags ?(.*)', msg, re.IGNORECASE)
+    if not match:
         return False
-    keys = R.keys(MARKED_KEY_PREFIX + '*')
+    query = '*' + match.group(1) + '*' if match.group(1) else '*'
+    keys = R.keys(MARKED_KEY_PREFIX + query)
     return "\n".join(map(lambda x : x.replace(MARKED_KEY_PREFIX, ''), keys))
 
 def roulette(msg):
