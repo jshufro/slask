@@ -5,7 +5,7 @@ import json
 import random
 import requests
 import re
-from conf import goog_api_key
+from limbo.conf import goog_api_key
 
 
 BOUNDS = "40.741869, -73.990950"

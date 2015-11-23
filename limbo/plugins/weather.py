@@ -9,7 +9,7 @@ import re
 import requests
 import time
 import logging
-from conf import goog_api_key, openweather_appid
+from limbo.conf import goog_api_key, openweather_appid
 
 LOG = logging.getLogger(__name__)
 

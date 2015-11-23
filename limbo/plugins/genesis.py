@@ -4,7 +4,7 @@ import re
 import requests
 import hashlib
 from random import choice
-from conf import flickr_client_key, flickr_client_secret
+from limbo.conf import flickr_client_key, flickr_client_secret
 
 def sign(params):
     md5 = hashlib.md5()

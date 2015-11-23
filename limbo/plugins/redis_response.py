@@ -7,7 +7,7 @@ import re
 import cgi
 import random
 import redis
-import conf
+from limb0 import conf
 
 
 R = redis.StrictRedis(host=conf.redis_host, port=conf.redis_port, db=conf.redis_db)

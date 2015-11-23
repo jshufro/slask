@@ -7,7 +7,7 @@ import re
 import requests
 import shlex
 from requests.auth import HTTPBasicAuth
-import conf
+from limbo import conf
 
 
 nagios_user = conf.nagios_user

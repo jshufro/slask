@@ -2,7 +2,7 @@
 
 import re
 from jenkinsapi.jenkins import Jenkins
-import conf
+from limbo import conf
 
 JENKINS_URL = 'https://jenkins.adnxs.net/'
 OPT_KEY = 'OPT-Optimization-Tests'
