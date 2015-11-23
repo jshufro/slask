@@ -129,16 +129,22 @@ def handle_message(event, server):
 
     # grep functionality
     if "| grep" in event['text']:
-        text = event['text']
-        components = event['text'].split('|')
-        source_query = components[0].rstrip()
-        event['text'] = source_query
-        initial_response = run_hook(server.hooks, "message", event, server)
-        initial_lines = [line for reeesponse in initial_response \
-            for line in reeesponse.split('\n')]
-        grep_string = components[1].split(' grep ')[1]
-        grepped_responses = [x for x in initial_lines if grep_string in x]
-        response = "\n".join(grepped_responses)
+        try:
+            text = event['text']
+            components = event['text'].split('|')
+            source_query = components[0].rstrip()
+            event['text'] = source_query
+            initial_response = run_hook(server.hooks, "message", event, server)
+            initial_lines = [line for reeesponse in initial_response \
+                for line in reeesponse.split('\n')]
+            grep_string = components[1].split(' grep ')[1]
+            grepped_responses = [x for x in initial_lines if grep_string in x]
+            if grepped_responses:    
+                response = "\n".join(grepped_responses)
+            else:
+                response = "Grep did not find any matches my young son"
+        except:
+            response = "\n".join(run_hook(server.hooks, "message", event, server))
 
     else:
         # response = handle_recursion(event, server, 0, event.get("text"))
