@@ -142,7 +142,7 @@ def handle_message(event, server):
             else:
                 response = "Grep did not find any matches my young son"
         except:
-            logging.exception()
+            logging.exception('')
             response = "\n".join(run_hook(server.hooks, "message", event, server))
 
     else:
