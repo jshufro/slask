@@ -8,10 +8,9 @@ import re
 import requests
 from random import shuffle
 import logging
-from limbo import LAST_MESSAGE
 
 LOG = logging.getLogger(__name__)
-
+LAST_MESSAGE = ""
 
 def image(searchterm, unsafe=False):
     searchterm = quote(searchterm)

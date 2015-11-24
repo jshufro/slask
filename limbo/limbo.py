@@ -26,7 +26,6 @@ logger = logging.getLogger(__name__)
 MAX_RECURSION = 3
 #these strings will not be processed by goob when sent by goob
 NO_RECURSE_STRINGS = ['!help']
-LAST_MESSAGE = ""
 
 class InvalidPluginDir(Exception):
     def __init__(self, plugindir):
