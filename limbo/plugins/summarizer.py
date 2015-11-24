@@ -48,15 +48,14 @@ class FrequencySummarizer:
         del freq[w]
     return freq
 
-  def summarize(self, text, n):
+  def summarize(self, sents, n):
     """
       Return a list of n sentences
       which represent the summary of text.
     """
     LOGGER.info('in summarize')
-    LOGGER.info(text[:50])
 
-    sents = sent_tokenize(text)
+    # sents = sent_tokenize(text)
     LOGGER.info(sents)
     assert n <= len(sents)
     word_sent = [word_tokenize(s.lower()) for s in sents]
@@ -102,7 +101,12 @@ def on_message(msg, server):
 
     if text == "!summarize":
         fs = FrequencySummarizer()
-        return fs.summarize(history(), 10)
+        sents = []
+        for k in sorted(R.keys(PREFIX + '*')):
+            for m in R.lrange(k, 0, -1):
+                val = json.loads(m)
+                sents.append(val['text'])
+        return fs.summarize(sents, 10)
 
     v = dict()
     v['text'] = text
