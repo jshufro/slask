@@ -12,9 +12,14 @@ REDIS = StrictRedis(host=conf.redis_host, port=conf.redis_port, db=conf.redis_db
 ROLLCALL_KEY = "rollcall"
 
 def get_users():
-    users_url = 'https://slack.com/api/channels.list?token={0}&channel={1}'.format(token, optimization_channel)
+    users_url = 'https://slack.com/api/channels.info?token={0}&channel={1}'.format(token, optimization_channel)
     r = requests.get(users_url)
     return r.json().get('channel').get('members')
+
+def get_username(user_id):
+    users_url = 'https://slack.com/api/users.info?token={}&user={}'.format(token, user_id)
+    r = requests.get(users_url)
+    return r.json().get('user').get('name')
 
 def on_message(msg, server):
     text = msg.get('text', '')
@@ -23,14 +28,13 @@ def on_message(msg, server):
         return False
 
     channel_users = get_users()
-    roll_users = REDIS.lrange(ROLLCALL_KEY)
-    # matched_users = []
-    # (channel_users in roll)
-    # for user in channel_users:
-    #     if user in roll:
-    #         matched_users.append(user)
+    roll_users = REDIS.lrange(ROLLCALL_KEY, 0, -1)
 
-    matched_users = filter(lambda x: x['name'].lower() in roll_users, channel_users)
+    channel_usernames = []
+    for user_id in channel_users:
+        channel_usernames.append(get_username(user_id))
+
+    matched_users = filter(lambda x: x in roll_users, channel_usernames)
 
     if not matched_users:
         return "No one's around right now."
