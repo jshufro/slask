@@ -12,7 +12,7 @@ REDIS = StrictRedis(host=conf.redis_host, port=conf.redis_port, db=conf.redis_db
 ROLLCALL_KEY = "rollcall"
 
 def get_users():
-    users_url = 'https://slack.com/api/channels.list?token={}&channel={1}'.format(token, optimization_channel)
+    users_url = 'https://slack.com/api/channels.list?token={0}&channel={1}'.format(token, optimization_channel)
     r = requests.get(users_url)
     return r.json().get('channel').get('members')
 
