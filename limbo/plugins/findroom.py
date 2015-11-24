@@ -5,14 +5,20 @@ import requests
 import re
 import datetime
 import pytz
+import pyparsing
+import nlp_date
+import logging
+import parsedatetime
 
 
 def findroom_response(text):
     utc = pytz.utc
+    cal = parsedatetime.Calendar()
+    
     current_dt = \
         utc.localize(datetime.datetime.now()).astimezone(pytz.timezone('US/Eastern'))
     
-    match = re.match(r'!findroom ?(.{3,4})? ?(\d{2})? ?(\d{2}\:\d{2})? ?(\d{4}\-\d{2}\-\d{2})?', text, re.IGNORECASE)
+    match = re.match(r'!findroom ?(on )?(nyc\d|pdx|sfo)?( for | )?(\d{2})?( | minutes)? (.+)?', text, re.IGNORECASE)
     if not match:
         return False
 
@@ -22,15 +28,31 @@ def findroom_response(text):
         target_minutes = 60-current_dt.minute # add minutes to get to the 00 of the next hour
     else:
         target_minutes = 30-current_dt.minute # start at the next :30 otherwise
-
-    # parse args
-    floor = match.group(1) or 'nyc4'
-    start_date = match.group(4) or current_dt.strftime('%Y-%m-%d')
-    start_time = match.group(3) or (current_dt + datetime.timedelta(minutes=target_minutes)).strftime('%H:%M:00')
-    if match.group(3) != None:
-        start_time += ":00"
     
-    duration = match.group(2) or 30
+    print(match)
+    # parse args
+    
+    
+    
+    floor = match.group(2) or 'nyc4'
+    try: 
+        datetime_obj, _ = cal.parseDT(datetimeString=match.group(6), tzinfo=pytz.timezone("US/Eastern"))
+        # print (match.group(6))
+        # print (datetime_obj)
+        start_date = datetime_obj.strftime('%Y-%m-%d')
+        start_time = datetime_obj.strftime('%H:%M:00')
+        
+    except (AttributeError):
+        # print "Did not match stuff"
+        start_date = current_dt.strftime('%Y-%m-%d')
+        start_time = (current_dt + datetime.timedelta(minutes=target_minutes)).strftime('%H:%M:00')
+    
+    # start_date = match.group(4) or 
+    # start_time = match.group(3) or 
+    # if match.group(3) != None:
+    #     start_time += ":00"
+    
+    duration = match.group(4) or 30
 
     request = {'mode':'json', 'duration':duration, 'date':start_date, 'time':start_time, 'location':floor}
     result = requests.post('http://mmisiewicz.devnxs.net:7777/get_avail', data=simplejson.dumps(request))
