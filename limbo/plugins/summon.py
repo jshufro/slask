@@ -6,7 +6,7 @@ from limbo import conf
 
 
 token = os.environ['SLACK_TOKEN']
-optimization_channel = conf.slack_optimization_channel
+optimization_channel = 'C03KM8KEH'
 
 
 def get_users():

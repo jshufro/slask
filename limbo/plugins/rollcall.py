@@ -8,7 +8,7 @@ from limbo import conf
 import os
 
 token = os.environ['SLACK_TOKEN']
-optimization_channel = conf.slack_optimization_channel
+optimization_channel = 'C03KM8KEH'
 REDIS = StrictRedis(host=conf.redis_host, port=conf.redis_port, db=conf.redis_db)
 ROLLCALL_KEY = "rollcall"
 
