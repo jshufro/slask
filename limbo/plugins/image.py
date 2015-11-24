@@ -40,6 +40,8 @@ def on_message(msg, server):
     text = msg.get("text", "")
     match = re.findall(r"!image (.*)", text)
     if not match:
+        if text == "!dolan":
+            return image("dolan comic")
         return
 
     searchterm = match[0]

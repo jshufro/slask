@@ -1,19 +1,23 @@
 """!hashtag <hashtag> : get all messages tagged
 !clear <hashtag> : delete that hashtag
 !roulette: prints out a random tag
+!coldbrew (<status>)?: gets the latest coldbrew status, or updates it.
 !alltags <query>: all the tags, optionally with a search parameter"""
 
 import re
 import cgi
 import random
+import pytz
 import redis
 import json
+import datetime
 from limbo import conf
 
 
 R = redis.StrictRedis(host=conf.redis_host, port=conf.redis_port, db=conf.redis_db)
 PREFIX = 'optbot:'  # redis key namespace for opt-bot
 MARKED_KEY_PREFIX = 'opt:'
+CB_KEY = 'coldbrew'
 
 # key-value functions
 
@@ -115,10 +119,23 @@ def roulette(msg):
     messages = R.lrange(key, 0, -1)
     return "\n".join(messages)
 
+def coldbrew(msg):
+    match = re.match(r'!coldbrew\s?(.*)', msg, re.IGNORECASE)
+    if not match:
+        return False
+
+    key = PREFIX + CB_KEY
+    if (match.group(1)):
+        now = datetime.datetime.now(tz=pytz.timezone('America/New_York'))
+        R.set(key, match.group(1) + " at " + now.strftime("%Y-%m-%d %H:%M %Z"))
+        return "Coldbrew status has been set to: " + match.group(1)
+    else:
+        return R.get(key) or "Status currently unavailable. Please check and let us know!"
+
 
 ALL = [R_set_response, R_get_response, R_show_response,
        store_marked_msg, get_marked_msg, clear_hashtag,
-       get_all_hashtags, roulette]
+       get_all_hashtags, roulette, coldbrew]
 
 
 def on_message(msg, server):
