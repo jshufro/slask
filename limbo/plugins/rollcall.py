@@ -1,13 +1,14 @@
 """!rollcall: lists all opt-tech members currently active in the room"""
 
-import requests
-import sys
 import re
-from redis import StrictRedis
-from limbo import conf
 
-token = 'xoxp-2543006699-3669524994-6723996225-a82588'
-optimization_channel = 'C03KM8KEH'
+import requests
+from redis import StrictRedis
+
+# from limbo import conf
+
+token = conf.slack_user_token
+optimization_channel = conf.slack_optimization_channel
 REDIS = StrictRedis(host=conf.redis_host, port=conf.redis_port, db=conf.redis_db)
 ROLLCALL_KEY = "rollcall"
 
@@ -21,26 +22,25 @@ def get_username(user_id):
     r = requests.get(users_url)
     return r.json().get('user').get('name')
 
+def get_presence(user_id):
+    presence_url = 'https://slack.com/api/users.getPresence?token={}&user={}'.format(token, user_id)
+    r = requests.get(presence_url)
+    return r.json().get('presence') == 'active'
+
+
 def on_message(msg, server):
     text = msg.get('text', '')
     match = re.match(r'!rollcall', text, re.IGNORECASE)
     if not match:
         return False
 
-    channel_users = get_users()
-    roll_users = REDIS.lrange(ROLLCALL_KEY, 0, -1)
-
+    roll_users = REDIS.hgetall(ROLLCALL_KEY)
     channel_usernames = []
-    for user_id in channel_users:
-        channel_usernames.append(get_username(user_id))
+    for username, user_id in roll_users.items():
+        if get_presence(user_id):
+            channel_usernames.append(channel_usernames)
 
-    matched_users = filter(lambda x: x in roll_users, channel_usernames)
-
-    if not matched_users:
+    if not channel_usernames:
         return "No one's around right now."
 
-    return "Present: " + ' '.join(sorted(matched_users))
-
-
-if __name__ == "__main__":
-    print on_message({'text': '!summon ' + sys.argv[1]}, None)
+    return "Present: " + ' '.join(sorted(channel_usernames))
