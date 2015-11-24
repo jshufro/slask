@@ -70,7 +70,7 @@ class FrequencySummarizer:
 
   def _rank(self, ranking, n):
     """ return the first n sentences with highest ranking """
-    LOGGER.INFO('in _rank')
+    LOGGER.info('in _rank')
     return nlargest(n, ranking, key=ranking.get)
 
 
