@@ -4,7 +4,7 @@ import re
 from image import image
 
 def on_message(msg, server):
-    text = "dolan comic"
+    text = "!image dolan comic"
     match = re.findall(r"!image (.*)", text)
     if not match:
         return
