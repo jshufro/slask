@@ -149,6 +149,9 @@ def handle_message(event, server):
     else:
         # response = handle_recursion(event, server, 0, event.get("text"))
         response = "\n".join(run_hook(server.hooks, "message", event, server))
+    #filter for accualy
+    accualy = re.compile(re.escape('actually'), re.IGNORECASE)
+    response = accualy.sub('actually', response)
     return response
 
 event_handlers = {
