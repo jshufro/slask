@@ -4,8 +4,7 @@ import re
 
 import requests
 from redis import StrictRedis
-
-# from limbo import conf
+from limbo import conf
 
 token = conf.slack_user_token
 optimization_channel = conf.slack_optimization_channel
