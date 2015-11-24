@@ -1,6 +1,7 @@
 """!hashtag <hashtag> : get all messages tagged
 !clear <hashtag> : delete that hashtag
 !roulette: prints out a random tag
+!coldbrew (<status>)?: gets the latest coldbrew status, or updates it.
 !alltags <query>: all the tags, optionally with a search parameter"""
 
 import re
@@ -128,9 +129,7 @@ def coldbrew(msg):
         R.set(PREFIX + CB_KEY, match.group(1) + " at " + now.strftime("%Y-%m-%d %H:%M %Z"))
         return "Coldbrew status has been set to: " + match.group(1)
     else:
-        return R.get(PREFIX + CB_KEY)
-
-
+        return R.get(PREFIX + CB_KEY) or "Status currently unavailable. Please check and let us know!"
 
 
 ALL = [R_set_response, R_get_response, R_show_response,
