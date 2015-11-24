@@ -106,6 +106,14 @@ def handle_recursion(event, server, recurses, newText):
             for item in sublist]
     return response
 
+def response_subsitutions(response):
+
+    #filter for accualy
+    accualy = re.compile(re.escape('actually'), re.IGNORECASE)
+    response = accualy.sub('accualy', response)
+
+    return response
+
 def handle_message(event, server):
     # ignore bot messages and edits
     subtype = event.get("subtype", "")
@@ -149,12 +157,7 @@ def handle_message(event, server):
     else:
         # response = handle_recursion(event, server, 0, event.get("text"))
         response = "\n".join(run_hook(server.hooks, "message", event, server))
-    #filter for accualy
-    accualy = re.compile(re.escape('actually'), re.IGNORECASE)
-    response = accualy.sub('accualy', response)
-    if accualy.search(event['text']):
-        response = "Are you sure you didn't mean \"" + accualy.sub('accualy', event['text']) + "\"?\n" + response
-    return response
+    return response_subsitutions(response)
 
 event_handlers = {
     "message": handle_message,
