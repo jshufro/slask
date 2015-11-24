@@ -152,6 +152,8 @@ def handle_message(event, server):
     #filter for accualy
     accualy = re.compile(re.escape('actually'), re.IGNORECASE)
     response = accualy.sub('accualy', response)
+    if accualy.search(event['text']):
+        response = "Are you sure you didn't mean \"" + accualy.sub('accualy', event['text']) + "\"?\n" + response
     return response
 
 event_handlers = {
