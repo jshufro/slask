@@ -25,7 +25,7 @@ def on_message(msg, server):
             for m in R.lrange(k, 0, -1):
                 val = json.loads(m)
                 t = time.strftime("%a, %d %b %Y %H:%M:%S",
-                                  time.localtime(int(float(v['ts'])))
+                                  time.localtime(int(float(val['ts']))))
                 resp += str(t) + val['user'] + ": " + val['text'] + "\n"
         return resp
 
