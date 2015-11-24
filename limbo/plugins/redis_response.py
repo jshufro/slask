@@ -54,7 +54,7 @@ def store_marked_msg(msg, server):
     URL_REGEX = r'(.*)<(http.*)>(.*)'
     text = msg.get("text", "")
 
-    match = re.match(r'(.*) [#/](?P<tag>\w+)\s?(.*)$', text, re.IGNORECASE)
+    match = re.match(r'(.*) [#](?P<tag>\w+)\s?(.*)$', text, re.IGNORECASE)
     if not match:
         return False
 
