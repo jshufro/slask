@@ -151,7 +151,7 @@ def handle_message(event, server):
         response = "\n".join(run_hook(server.hooks, "message", event, server))
     #filter for accualy
     accualy = re.compile(re.escape('actually'), re.IGNORECASE)
-    response = accualy.sub('actually', response)
+    response = accualy.sub('accualy', response)
     return response
 
 event_handlers = {
