@@ -38,7 +38,7 @@ def on_message(msg, server):
     channel_usernames = []
     for username, user_id in roll_users.items():
         if get_presence(user_id):
-            channel_usernames.append(channel_usernames)
+            channel_usernames.append(username)
 
     if not channel_usernames:
         return "No one's around right now."
