@@ -13,11 +13,11 @@ import requests
 from bs4 import BeautifulSoup
 
 def choose_one(body):
-    reg = re.compile(r'(.*) OR (.*)')
-    match = reg.match(body)
+    match = re.findall(r' OR ', body)
     if not match:
         return False
-    return random.choice([match.group(1), match.group(2)])
+    choices = body.split(" OR ")
+    return random.choice(choices)
 
 def date_response(body):
     excuses = ["Sorry, I'm taken.",
