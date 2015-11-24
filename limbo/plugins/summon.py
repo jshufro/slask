@@ -1,9 +1,11 @@
 import requests
 import sys
 import re
+import os
+from limbo import conf
 
 
-token = 'xoxp-2543006699-3669524994-6723996225-a82588'
+token = os.environ['SLACK_TOKEN']
 optimization_channel = 'C03KM8KEH'
 
 
@@ -19,7 +21,7 @@ def on_message(msg, server):
     if not match:
         return False
 
-    user = match.group(1).split()[0].strip('@').strip(':')
+    user = match.group(1).split()[0].strip('<').strip('>').strip('@').strip(':')
     if not match:
         return False
 
