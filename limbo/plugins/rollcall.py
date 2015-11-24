@@ -4,6 +4,7 @@ import requests
 import sys
 import re
 from redis import StrictRedis
+from limbo import conf
 
 token = 'xoxp-2543006699-3669524994-6723996225-a82588'
 optimization_channel = 'C03KM8KEH'
