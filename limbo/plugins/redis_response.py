@@ -7,6 +7,7 @@ import re
 import cgi
 import random
 import redis
+import json
 from limbo import conf
 
 
@@ -66,7 +67,13 @@ def store_marked_msg(msg, server):
         message = search.group(1) + search.group(2) + search.group(3)
         search = re.search(URL_REGEX, message)
 
-    message += msg.get("user", "")
+    try:
+        response = json.loads(server.slack.api_call("users.info", user=msg["user"]))
+        hashtag_originator = response["user"]["profile"]["real_name"]
+        message = message + " -- " + hashtag_originator
+    except:
+        # something happened when trying to get the user but *shrug*
+        pass
     R.rpush(redis_tag, message)
     return "Stored under tag \"{}\"".format(tag)
 
