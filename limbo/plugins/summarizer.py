@@ -66,7 +66,7 @@ class FrequencySummarizer:
         if w in self._freq:
           ranking[i] += self._freq[w]
     sents_idx = self._rank(ranking, n)
-    return [sents[j] for j in sents_idx]
+    return '\n'.join([sents[j] for j in sents_idx])
 
   def _rank(self, ranking, n):
     """ return the first n sentences with highest ranking """
