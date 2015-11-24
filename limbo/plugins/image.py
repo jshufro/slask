@@ -8,6 +8,7 @@ import re
 import requests
 from random import shuffle
 import logging
+from limbo import LAST_MESSAGE
 
 LOG = logging.getLogger(__name__)
 
@@ -38,11 +39,18 @@ def image(searchterm, unsafe=False):
 
 def on_message(msg, server):
     text = msg.get("text", "")
-    match = re.findall(r"!image (.*)", text)
-    if not match:
-        if text == "!dolan":
-            return image("dolan comic")
-        return
 
-    searchterm = match[0]
-    return image(searchterm.encode("utf8"))
+    if text == "!dolan":
+        return image("dolan comic")
+
+    searchterm = None
+
+    match = re.findall(r"!image (.*)", text)
+    if match:
+        searchterm = LAST_MESSAGE + match[0]
+    match = re.findall(r"!plus (.*)")
+    if match:
+        searchterm = match[0]
+    if searchterm:
+        return image(searchterm.encode("utf8"))
+    return False

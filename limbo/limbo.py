@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 MAX_RECURSION = 3
 #these strings will not be processed by goob when sent by goob
 NO_RECURSE_STRINGS = ['!help']
+LAST_MESSAGE = ""
 
 class InvalidPluginDir(Exception):
     def __init__(self, plugindir):
@@ -157,6 +158,7 @@ def handle_message(event, server):
     else:
         # response = handle_recursion(event, server, 0, event.get("text"))
         response = "\n".join(run_hook(server.hooks, "message", event, server))
+    LAST_MESSAGE = event['text']
     return response_subsitutions(response)
 
 event_handlers = {
