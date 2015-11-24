@@ -1,6 +1,8 @@
 import redis
 import json
 import requests
+import time
+
 from limbo import conf
 
 R = redis.StrictRedis(host=conf.redis_host, port=conf.redis_port, db=conf.redis_db)
@@ -22,7 +24,9 @@ def on_message(msg, server):
         for k in sorted(R.keys(PREFIX + '*')):
             for m in R.lrange(k, 0, -1):
                 val = json.loads(m)
-                resp += val['user'] + ": " + val['text'] + "\n"
+                t = time.strftime("%a, %d %b %Y %H:%M:%S",
+                                  time.localtime(int(float(v['ts'])))
+                resp += str(t) + val['user'] + ": " + val['text'] + "\n"
         return resp
 
     v = dict()
