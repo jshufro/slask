@@ -16,7 +16,7 @@ def findroom_response(text):
     current_dt_local = \
         utc.localize(datetime.datetime.now()).astimezone(pytz.timezone('US/Eastern'))
     
-    match = re.match(r'!findroom ?(on )?(nyc\d |pdx |sfo )?(for )?(\d{2} )?(minutes )?(.+)?', text, re.IGNORECASE)
+    match = re.match(r'!findroom ?(on )?(nyc\d|pdx|sfo)? ?(for )?(\d{2})? ?(minutes )?(.+)?', text, re.IGNORECASE)
     if not match:
         print "Warning failed to match regex to %s" % text
         return False
