@@ -5,7 +5,7 @@ import os
 from limbo import conf
 
 
-token = os.environ('SLACK_TOKEN')
+token = os.environ['SLACK_TOKEN']
 optimization_channel = conf.slack_optimization_channel
 
 
