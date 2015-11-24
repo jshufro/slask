@@ -27,7 +27,7 @@ def random_response(text, user):
 
 def on_message(msg, server):
     text = msg.get("text", "")
-    if text.startsWith("!"):
+    if text.startswith("!"):
         return False
 
     if random.random() < 0.5:
