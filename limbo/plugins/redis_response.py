@@ -120,16 +120,17 @@ def roulette(msg):
     return "\n".join(messages)
 
 def coldbrew(msg):
-    match = re.match(r'!coldbrew\s?(.*)?', msg, re.IGNORECASE)
+    match = re.match(r'!coldbrew\s?(.*)', msg, re.IGNORECASE)
     if not match:
         return False
 
+    key = PREFIX + CB_KEY
     if (match.group(1)):
         now = datetime.datetime.now(tz=pytz.timezone('America/New_York'))
-        R.set(PREFIX + CB_KEY, match.group(1) + " at " + now.strftime("%Y-%m-%d %H:%M %Z"))
+        R.set(key, match.group(1) + " at " + now.strftime("%Y-%m-%d %H:%M %Z"))
         return "Coldbrew status has been set to: " + match.group(1)
     else:
-        return R.get(PREFIX + CB_KEY) or "Status currently unavailable. Please check and let us know!"
+        return R.get(key) or "Status currently unavailable. Please check and let us know!"
 
 
 ALL = [R_set_response, R_get_response, R_show_response,
