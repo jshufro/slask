@@ -46,22 +46,27 @@ def R_show_response(msg):
         return response
 
 
-# hashtag functions
+# Hashtag functions
 
-URL_REGEX = r'(.*)<(http.*)>(.*)'
-
-def store_marked_msg(msg):
+def store_marked_msg(msg, server):
     """[#/] picks up any message with a hashtag and stores it under that tag"""
-    match = re.match(r'(.*) [#](?P<tag>\w+)\s?(.*)$', msg, re.IGNORECASE)
+    URL_REGEX = r'(.*)<(http.*)>(.*)'
+    text = msg.get("text", "")
+
+    match = re.match(r'(.*) [#/](?P<tag>\w+)\s?(.*)$', text, re.IGNORECASE)
     if not match:
         return False
+
     tag = match.group('tag').lower()
     redis_tag = MARKED_KEY_PREFIX + tag
     message = match.group(0)
+
     search = re.search(URL_REGEX, message)
-    while (search):
+    while search:
         message = search.group(1) + search.group(2) + search.group(3)
         search = re.search(URL_REGEX, message)
+
+    message += msg.get("user", "")
     R.rpush(redis_tag, message)
     return "Stored under tag \"{}\"".format(tag)
 
@@ -112,6 +117,9 @@ ALL = [R_set_response, R_get_response, R_show_response,
 def on_message(msg, server):
     text = msg.get("text", "")
     for fn in ALL:
-        response = fn(text)
+        if fn == store_marked_msg:
+            response = fn(msg, server)
+        else:
+            response = fn(text)
         if response:
             return response
