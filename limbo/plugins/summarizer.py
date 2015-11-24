@@ -7,8 +7,11 @@ from nltk.corpus import stopwords
 from collections import defaultdict
 from string import punctuation
 from heapq import nlargest
+import logging
 
 from limbo import conf
+
+LOGGER = logging.getLogger(__name__)
 
 
 class FrequencySummarizer:
@@ -21,6 +24,7 @@ class FrequencySummarizer:
     self._min_cut = min_cut
     self._max_cut = max_cut
     self._stopwords = set(stopwords.words('english') + list(punctuation))
+    LOGGER.INFO(self._stopwords)
 
   def _compute_frequencies(self, word_sent):
     """
@@ -30,12 +34,13 @@ class FrequencySummarizer:
       Output:
        freq, a dictionary where freq[w] is the frequency of w.
     """
+    LOGGER.INFO('in compute frequencies')
     freq = defaultdict(int)
     for s in word_sent:
       for word in s:
         if word not in self._stopwords:
           freq[word] += 1
-    # frequencies normalization and fitering
+    # frequencies normalization and filtering
     m = float(max(freq.values()))
     for w in freq.keys():
       freq[w] = freq[w]/m
@@ -48,12 +53,16 @@ class FrequencySummarizer:
       Return a list of n sentences
       which represent the summary of text.
     """
+    LOGGER.INFO('in summarize')
+    LOGGER.INFO(text[:50])
+
     sents = sent_tokenize(text)
+    LOGGER.INFO(sents)
     assert n <= len(sents)
     word_sent = [word_tokenize(s.lower()) for s in sents]
     self._freq = self._compute_frequencies(word_sent)
     ranking = defaultdict(int)
-    for i,sent in enumerate(word_sent):
+    for i, sent in enumerate(word_sent):
       for w in sent:
         if w in self._freq:
           ranking[i] += self._freq[w]
@@ -62,6 +71,7 @@ class FrequencySummarizer:
 
   def _rank(self, ranking, n):
     """ return the first n sentences with highest ranking """
+    LOGGER.INFO('in _rank')
     return nlargest(n, ranking, key=ranking.get)
 
 
