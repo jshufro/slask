@@ -1,16 +1,21 @@
 import redis
 import json
+import requests
 from limbo import conf
 
 R = redis.StrictRedis(host=conf.redis_host, port=conf.redis_port, db=conf.redis_db)
 
 PREFIX = 'optbot:history:'  # redis key namespace for opt-bot history
 
+def get_username(user_id):
+    token = 'xoxp-2543006699-3669524994-6723996225-a82588'
+    users_url = 'https://slack.com/api/users.info?token={}&user={}'.format(token, user_id)
+    r = requests.get(users_url)
+    return r.json().get('user').get('name')
+
 # key-value functions
 
-
 def on_message(msg, server):
-
     text = msg.get("text", "")
     if text == "!history":
         resp = ""
@@ -22,7 +27,7 @@ def on_message(msg, server):
 
     v = dict()
     v['text'] = text
-    v['user'] = msg.get("user", "")
+    v['user'] = get_username(msg.get("user", ""))
     v['ts'] = msg.get("ts", "")
     ts = int(float(v['ts']))
 
