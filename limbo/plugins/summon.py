@@ -2,10 +2,11 @@ import requests
 import sys
 import re
 import os
+from limbo import conf
 
 
 token = os.environ('SLACK_TOKEN')
-optimization_channel = 'C03KM8KEH'
+optimization_channel = conf.slack_optimization_channel
 
 
 def get_users():

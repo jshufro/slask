@@ -5,8 +5,9 @@ import re
 import requests
 from redis import StrictRedis
 from limbo import conf
+import os
 
-token = conf.slack_user_token
+token = os.environ('SLACK_TOKEN')
 optimization_channel = conf.slack_optimization_channel
 REDIS = StrictRedis(host=conf.redis_host, port=conf.redis_port, db=conf.redis_db)
 ROLLCALL_KEY = "rollcall"
