@@ -1,4 +1,3 @@
-import re
 import random
 import json
 
@@ -30,7 +29,7 @@ def on_message(msg, server):
     if text.startswith("!"):
         return False
 
-    if random.random() < 0.5:
+    if random.random() < P:
         response = json.loads(server.slack.api_call("users.info", user=msg["user"]))
         user = response["user"]["profile"]["real_name"]
         return random_response(text, user)
