@@ -5,8 +5,6 @@ import requests
 import re
 import datetime
 import pytz
-import pyparsing
-import nlp_date
 import logging
 import parsedatetime
 
