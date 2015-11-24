@@ -47,7 +47,7 @@ def on_message(msg, server):
     match = re.findall(r"!image (.*)", text)
     if match:
         searchterm = LAST_MESSAGE + match[0]
-    match = re.findall(r"!plus (.*)")
+    match = re.findall(r"!plus (.*)", text)
     if match:
         searchterm = match[0]
     if searchterm:
