@@ -12,22 +12,23 @@ import parsedatetime
 def findroom_response(text):
     utc = pytz.utc
     cal = parsedatetime.Calendar()
-    
-    current_dt = \
+    current_dt_utc = datetime.datetime.now()
+    current_dt_local = \
         utc.localize(datetime.datetime.now()).astimezone(pytz.timezone('US/Eastern'))
     
-    match = re.match(r'!findroom ?(on )?(nyc\d|pdx|sfo)?( for | )?(\d{2})?( | minutes)? (.+)?', text, re.IGNORECASE)
+    match = re.match(r'!findroom ?(on )?(nyc\d |pdx |sfo )?(for )?(\d{2} )?(minutes )?(.+)?', text, re.IGNORECASE)
     if not match:
+        print "Warning failed to match regex to %s" % text
         return False
 
     # WHAT YEAR IS IT
-    hour_fraction = current_dt.minute / 60.
+    hour_fraction = current_dt_local.minute / 60.
     if hour_fraction > 0.5: # we're past the 30 currently
-        target_minutes = 60-current_dt.minute # add minutes to get to the 00 of the next hour
+        target_minutes = 60-current_dt_local.minute # add minutes to get to the 00 of the next hour
     else:
-        target_minutes = 30-current_dt.minute # start at the next :30 otherwise
+        target_minutes = 30-current_dt_local.minute # start at the next :30 otherwise
     
-    print(match)
+    # print(match)
     # parse args
     
     
@@ -40,15 +41,10 @@ def findroom_response(text):
         start_date = datetime_obj.strftime('%Y-%m-%d')
         start_time = datetime_obj.strftime('%H:%M:00')
         
-    except (AttributeError):
+    except (AttributeError, TypeError):
         # print "Did not match stuff"
-        start_date = current_dt.strftime('%Y-%m-%d')
-        start_time = (current_dt + datetime.timedelta(minutes=target_minutes)).strftime('%H:%M:00')
-    
-    # start_date = match.group(4) or 
-    # start_time = match.group(3) or 
-    # if match.group(3) != None:
-    #     start_time += ":00"
+        start_date = current_dt_local.strftime('%Y-%m-%d')
+        start_time = (current_dt_local + datetime.timedelta(minutes=target_minutes)).strftime('%H:%M:00')
     
     duration = match.group(4) or 30
 
