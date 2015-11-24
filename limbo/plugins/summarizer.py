@@ -24,7 +24,7 @@ class FrequencySummarizer:
     self._min_cut = min_cut
     self._max_cut = max_cut
     self._stopwords = set(stopwords.words('english') + list(punctuation))
-    LOGGER.INFO(self._stopwords)
+    LOGGER.info(self._stopwords)
 
   def _compute_frequencies(self, word_sent):
     """
@@ -34,7 +34,7 @@ class FrequencySummarizer:
       Output:
        freq, a dictionary where freq[w] is the frequency of w.
     """
-    LOGGER.INFO('in compute frequencies')
+    LOGGER.info('in compute frequencies')
     freq = defaultdict(int)
     for s in word_sent:
       for word in s:
@@ -53,11 +53,11 @@ class FrequencySummarizer:
       Return a list of n sentences
       which represent the summary of text.
     """
-    LOGGER.INFO('in summarize')
-    LOGGER.INFO(text[:50])
+    LOGGER.info('in summarize')
+    LOGGER.info(text[:50])
 
     sents = sent_tokenize(text)
-    LOGGER.INFO(sents)
+    LOGGER.info(sents)
     assert n <= len(sents)
     word_sent = [word_tokenize(s.lower()) for s in sents]
     self._freq = self._compute_frequencies(word_sent)
