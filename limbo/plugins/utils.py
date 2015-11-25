@@ -79,6 +79,12 @@ def pong(body):
         return False
     return "pong. http://www.ponggame.org/"
 
+def echo(body):
+    match = re.match('!echo (.*)', body, re.IGNORECASE)
+    if not match:
+        return False
+    return match.group(1)
+
 def budget_query_age(body):
     reg = re.compile(r'!budget query\s?(?P<hours>\d+)?', re.IGNORECASE)
     match = reg.match(body)
@@ -100,7 +106,8 @@ ALL = [choose_one,
        dt_response,
        blame,
        pong,
-       budget_query_age]
+       budget_query_age,
+       echo]
 
 
 def on_message(msg, server):
