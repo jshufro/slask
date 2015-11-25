@@ -12,4 +12,8 @@ def on_message(msg, server):
     if helptopic:
         return server.hooks["help"].get(helptopic, "No help found for {0}".format(helptopic))
     else:
-        return "\n".join(sorted(server.hooks["help"].values()))
+        # we want to flatten the docs to be line by line rather than plugin by plugin.
+        list_of_lists_of_help_docs = [val.split('\n') for val in server.hooks["help"].values()]
+        flattened = [ele for sublist in list_of_lists_of_help_docs for ele in sublist]
+        # sort and return.
+        return "\n".join(sorted(flattened))
