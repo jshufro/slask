@@ -12,4 +12,4 @@ def on_message(msg, server):
     if helptopic:
         return server.hooks["help"].get(helptopic, "No help found for {0}".format(helptopic))
     else:
-        return "\n".join(sorted(val.split("\n") for val in server.hooks["help"].values()))
+        return "\n".join(sorted(server.hooks["help"].values()))
