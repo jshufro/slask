@@ -1,6 +1,6 @@
 """!99 problems : all etl opt nagios services that are not OK
 !downtime <service> <duration(minutes)> <host> <comment>: set nagios downtime
-!fake_ok <service> <host>: Fake OK result
+!fakeok <service> <host>: Fake OK result
 """
 
 import re
@@ -48,7 +48,7 @@ def set_downtime(text):
     return make_request(url)
 
 def fake_ok(text):
-    match = re.match(r"^!fake_ok\s+(?P<service>[\w-]+)\s+(?P<host>[\w\-\.]+)\s*$", text, re.IGNORECASE)
+    match = re.match(r"^!fakeok\s+(?P<service>[\w-]+)\s+(?P<host>[\w\-\.]+)\s*$", text, re.IGNORECASE)
     if not match:
         return False
     service = match.group('service')
