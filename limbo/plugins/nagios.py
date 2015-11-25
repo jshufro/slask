@@ -1,7 +1,6 @@
 """!99 problems : all etl opt nagios services that are not OK
 !downtime <service> <duration(minutes)> <host> <comment>: set nagios downtime
-!fakeok <service> <host>: Fake OK result for nagios
-"""
+!fakeok <service> <host>: Fake OK result for nagios"""
 
 import re
 import requests
