@@ -1,10 +1,11 @@
+"""!xkcd (#|today|random)? 'link'?: returns an xkcd comic. default random"""
+
 import xkcd
 import re
 
 EXPLAIN = "http://www.explainxkcd.com/wiki/index.php/"
 
 def xkcd_response(text):
-    """!xkcd (#|today|random)? 'link'?: returns an xkcd comic. default random"""
     match = re.match(r'!xkcd ?(\w+)? ?(\w+)?', text)
     if not match:
         return False

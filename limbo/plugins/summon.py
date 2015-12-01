@@ -1,3 +1,5 @@
+"""!summon <username>: summons <username> to the channel """
+
 import requests
 import sys
 import re

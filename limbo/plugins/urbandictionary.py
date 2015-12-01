@@ -1,4 +1,4 @@
-"""!urbandictionary something"""
+"""!urbandictionary <search term>: returns urbandictionary result for <search term>"""
 import re
 try:
     from urllib import quote, unquote

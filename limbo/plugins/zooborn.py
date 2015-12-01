@@ -1,3 +1,5 @@
+"""!zooborn <search term>: returns a zooborn comic sometimes appropriate for <search term>"""
+
 from bs4 import BeautifulSoup
 import requests
 from random import randint, shuffle

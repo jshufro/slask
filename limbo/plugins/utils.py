@@ -1,10 +1,11 @@
-"""X OR Y: let goob make all your important life decisions
+"""X OR Y OR ...: let goob make all your important life decisions
 !date: UTC time
 !dt: UTC time
 !greeting: seasons greetings from goob
 !blame : what's your excuse?
 !ping: pong
-!budget query <X> : link to budget age metrics <for X hours> (defaults to 2)"""
+!budget query <X> : link to budget age metrics <for X hours> (defaults to 2)
+!echo <message>: makes goob say <message>"""
 
 import re
 import random

@@ -1,4 +1,4 @@
-"""substitutions: substitutes text for accualy etc"""
+# substitutions: substitutes text for accualy etc
 
 import logging
 import re
