@@ -26,7 +26,7 @@ def smbc_response(text):
 
     try:
         r = get(url)
-        return url + "\n" + BeautifulSoup(r.text).find(id="comicimage").img["src"]
+        return url + "\n" + BeautifulSoup(r.text).find(id="comic").img["src"]
     except:
         return url
 
