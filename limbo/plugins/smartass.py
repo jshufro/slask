@@ -1,7 +1,7 @@
 import random
 import json
 
-P = .01
+P = .001
 
 replacements = ["mymom", "gooby", "pls", "dolan", "appnexus", "opt"]
 
@@ -20,7 +20,7 @@ def random_response(text, user):
     responses.append("{}, do you even know what you're talking about?".format(user))
     responses.append("{}... just no".format(user))
     for s in replacements:
-        responses.append("or... " + text.replace(word, s))
+        responses.append("or... " + text.replace(" " + word + " ", " " + s + " "))
 
     return random.choice(responses)
 
