@@ -29,7 +29,12 @@ def on_message(msg, server):
     if text.startswith("!"):
         return False
 
-    if random.random() < P:
+    prob = P
+
+    if "goob" in text:
+        prob = .15
+
+    if random.random() < prob:
         response = json.loads(server.slack.api_call("users.info", user=msg["user"]))
         user = response["user"]["profile"]["real_name"]
         return random_response(text, user)
