@@ -1,7 +1,9 @@
 import random
 import json
 
-P = .001
+P = .005
+P_GOOB = .15
+MIN_WORDS = 5
 
 replacements = ["mymom", "gooby", "pls", "dolan", "appnexus", "opt"]
 
@@ -12,7 +14,7 @@ def random_response(text, user):
     responses = []
     responses.append("Very wow")
     responses.append("Yeezy taught me")
-    responses.append("You who else is {}? #mymom".format(word))
+    responses.append("You what else is {}? #mymom".format(word))
     responses.append("I agree with {}".format(user))
     responses.append("Sounds good to me, {}".format(user))
     responses.append("I'm proud of you {}".format(user))
@@ -29,10 +31,14 @@ def on_message(msg, server):
     if text.startswith("!"):
         return False
 
+    words = text.split(" ")
+    if len(words) < MIN_WORDS:
+        return False
+
     prob = P
 
     if "goob" in text:
-        prob = .15
+        prob = P_GOOB
 
     if random.random() < prob:
         response = json.loads(server.slack.api_call("users.info", user=msg["user"]))
