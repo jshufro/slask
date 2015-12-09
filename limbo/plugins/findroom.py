@@ -18,7 +18,7 @@ def findroom_response(text):
     
     match = re.match(r'!findroom ?(on )?(nyc\d|pdx|sfo)? ?(for )?(\d{2})? ?(minutes )?(.+)?', text, re.IGNORECASE)
     if not match:
-        print "Warning failed to match regex to %s" % text
+        # print "Warning failed to match regex to %s" % text
         return False
 
     # WHAT YEAR IS IT
