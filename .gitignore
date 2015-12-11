@@ -17,3 +17,4 @@ slask.log
 slask.pid
 log
 .token
+*.bk

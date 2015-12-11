@@ -31,13 +31,7 @@ def _templates():
 
 
 def _help(templates):
-    memes = []
-    for meme in templates.itervalues():
-        memes.append(meme._asdict())
-    return "```%s```" % json.dumps(memes,
-                                   indent=4,
-                                   sort_keys=True,
-                                   separators=(',', ': '))
+    return '!meme <template> <up>/<down>\n%s/templates' % API
 
 
 def on_message(msg, server):
@@ -77,4 +71,5 @@ def on_message(msg, server):
 
 
 if __name__ == '__main__':
-    print on_message({'text': '!meme whine almond milk in iced coffee/cheese curds'}, None)
+    #print on_message({'text': '!meme whine almond milk in iced coffee/cheese curds'}, None)
+    print on_message({'text': '!meme'}, None)
