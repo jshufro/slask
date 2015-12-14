@@ -104,7 +104,10 @@ TRIGGERS = [
     "total quality",
     "touch(|ing) (base|points)",
     "value (add|proposition)",
-    "verb(iage|age)"
+    "verb(iage|age)",
+    "go(-| )to(-| )market",
+    "insights",
+    "customer engagement"
 ]
 
 IMAGES = [
