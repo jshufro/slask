@@ -26,3 +26,4 @@ tox==2.0.1
 redis
 wolframalpha
 parsedatetime
+textblob
