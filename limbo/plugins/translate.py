@@ -35,9 +35,8 @@ def on_message(msg, server):
 
     match = re.search(r"!translate( from\:(?P<from_lang>\S+))?( to:(?P<to_lang>\S+))? (?P<phrase>.+)", text)
 
-    print match
     if not match:
-        return "Goob experiences troubles with your input. :new_moon_with_face:"
+        return
 
     phrase, from_lang, to_lang = get_languages_string(match)
 
