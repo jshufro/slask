@@ -26,9 +26,9 @@ def translate(phrase, from_lang, to_lang='en'):
 
     try:
         translation = blob.translate(from_lang=from_lang, to=to_lang)
+        return translation.string
     except:
         return "Sorry, no translation!"
-    return translation
 
 def on_message(msg, server):
     text = msg.get("text", "")
