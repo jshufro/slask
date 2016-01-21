@@ -100,10 +100,9 @@ def host_tasks(body):
         host = "{}.bm-etl-optimization.prod.lax1".format(host)
     except ValueError:
         pass
-    try:
-        if host.lower().startswith('regexp'):
-            pass
-    except:
+    if host.startswith('regexp'):
+        pass
+    else:
         host = "like '%s'" % host
     query = query % host
     command_str = 'echo "' + query + '" | ' + DB
