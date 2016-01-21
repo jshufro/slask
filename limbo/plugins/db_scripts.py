@@ -87,7 +87,7 @@ def host_tasks(body):
     query = """select host, job_id, work_task_id, handler, t.insert_time, t.start_time,
             timediff(now(), t.start_time) as total
             from work_queue_task t, work_queue_job j
-            where t.job_id = j.id and host like '%s' and t.status = 'running'
+            where t.job_id = j.id and host %s and t.status = 'running'
             and t.insert_time >= now() - interval 1 day;"""
 
     exp = re.compile('!host (.*)', re.IGNORECASE)
@@ -100,6 +100,11 @@ def host_tasks(body):
         host = "{}.bm-etl-optimization.prod.lax1".format(host)
     except ValueError:
         pass
+    try:
+        if host.lower().startswith('regexp'):
+            pass
+    except:
+        host = "like '%s'" % host
     query = query % host
     command_str = 'echo "' + query + '" | ' + DB
     result = subprocess.check_output(command_str, shell=True)
