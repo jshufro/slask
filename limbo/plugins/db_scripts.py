@@ -84,7 +84,7 @@ def tasks(body):
 
 
 def host_tasks(body):
-    query = """select job_id, work_task_id, handler, t.insert_time, t.start_time,
+    query = """select host, job_id, work_task_id, handler, t.insert_time, t.start_time,
             timediff(now(), t.start_time) as total
             from work_queue_task t, work_queue_job j
             where t.job_id = j.id and host like '%s' and t.status = 'running'
