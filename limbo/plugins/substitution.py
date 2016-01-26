@@ -22,7 +22,7 @@ def on_message(msg, server):
     response = text
 
     for key in substitutes:
-		if (msg.get('user') == 'mha'):
+		if (server.slack.server.users.find(msg["user"]) == 'mha'):
 			response = spit_back_substitution(response, key, substitutes[key])
 
     if response != text:
