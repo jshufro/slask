@@ -6,7 +6,7 @@ import re
 logger = logging.getLogger(__name__)
 
 substitutes = {
-	# 'actually': 'accualy'
+	'actually': 'accualy'
 }
 
 def spit_back_substitution(input_string, regex_string, sub_string):
@@ -22,7 +22,8 @@ def on_message(msg, server):
     response = text
 
     for key in substitutes:
-    	response = spit_back_substitution(response, key, substitutes[key])
+		if (msg.get('user') == 'mha'):
+			response = spit_back_substitution(response, key, substitutes[key])
 
     if response != text:
     	return 'Are you sure you didn\'t mean "{0}"?\n'.format(response)
