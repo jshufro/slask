@@ -18,6 +18,7 @@ R = redis.StrictRedis(host=conf.redis_host, port=conf.redis_port, db=conf.redis_
 PREFIX = 'optbot:'  # redis key namespace for opt-bot
 MARKED_KEY_PREFIX = 'opt:'
 CB_KEY = 'coldbrew'
+ENABLE_AUTHOR_ATTRIBUTION = False
 
 # key-value functions
 
@@ -55,6 +56,8 @@ def R_show_response(msg):
 
 def store_marked_msg(msg, server):
     """#hashtag"""
+    global ENABLE_AUTHOR_ATTRIBUTION
+
     URL_REGEX = r'(.*)<(http.*)>(.*)'
     text = msg.get("text", "")
 
@@ -71,13 +74,15 @@ def store_marked_msg(msg, server):
         message = search.group(1) + search.group(2) + search.group(3)
         search = re.search(URL_REGEX, message)
 
-    try:
-        response = json.loads(server.slack.api_call("users.info", user=msg["user"]))
-        hashtag_originator = response["user"]["profile"]["real_name"]
-        message = message + " -- " + hashtag_originator
-    except:
-        # something happened when trying to get the user but *shrug*
-        pass
+    if ENABLE_AUTHOR_ATTRIBUTION:
+        try:
+            response = json.loads(server.slack.api_call("users.info", user=msg["user"]))
+            hashtag_originator = response["user"]["profile"]["real_name"]
+            message = message + " -- " + hashtag_originator
+        except:
+            # something happened when trying to get the user but *shrug*
+            pass
+
     R.rpush(redis_tag, message)
     return "Stored under tag \"{}\"".format(tag)
 
