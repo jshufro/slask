@@ -54,11 +54,11 @@ def R_show_response(msg):
 # Hashtag functions
 
 def store_marked_msg(msg, server):
-    """[#/] picks up any message with a hashtag and stores it under that tag"""
+    """#hashtag"""
     URL_REGEX = r'(.*)<(http.*)>(.*)'
     text = msg.get("text", "")
 
-    match = re.match(r'(.*) [#](?P<tag>\w+)\s?(.*)$', text, re.IGNORECASE)
+    match = re.match(r'(.*) [#](?P<tag>[^\s]+)(.*)$', text, re.IGNORECASE)
     if not match:
         return False
 
