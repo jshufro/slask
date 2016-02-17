@@ -18,3 +18,5 @@ slask.pid
 log
 .token
 *.bk
+.tox
+.start.sh

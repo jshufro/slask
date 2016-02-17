@@ -1,9 +1,9 @@
 """!image <search term> return a random result from the google image search result for <search term>"""
 
 try:
-    from urllib import quote, unquote
+    from urllib import quote
 except ImportError:
-    from urllib.request import quote, unquote
+    from urllib.request import quote
 import re
 import requests
 from random import shuffle
@@ -11,6 +11,20 @@ import logging
 
 LOG = logging.getLogger(__name__)
 LAST_MESSAGE = ""
+
+def octal_to_html_escape(re_match):
+    # an octal escape of the form '\75' (which ought to become '%3d', the
+    # url-escaped form of "=". Strip the leading \
+    s = re_match.group(0)[1:]
+
+    # convert octal to hex and strip the leading '0x'
+    h = hex(int(s, 8))[2:]
+
+    return "%{0}".format(h)
+
+def unescape(url):
+    # google uses octal escapes for god knows what reason
+    return re.sub(r"\\..", octal_to_html_escape, url)
 
 def image(searchterm, unsafe=False):
     searchterm = quote(searchterm)
@@ -23,7 +37,7 @@ def image(searchterm, unsafe=False):
 
     result = requests.get(searchurl, headers={"User-agent": useragent}).text
 
-    images = re.findall(r'imgurl.*?(http.*?)\\', result)
+    images = list(map(unescape, re.findall(r"var u='(.*?)'", result)))
     shuffle(images)
 
     if images:

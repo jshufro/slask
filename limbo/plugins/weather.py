@@ -5,6 +5,7 @@ try:
     from urllib import quote
 except ImportError:
     from urllib.request import quote
+import os
 import re
 import requests
 import time

@@ -13,6 +13,22 @@
 
 ![kitten mittens](http://i.imgur.com/xhmD6QO.png)
 
+## Command Arguments
+
+* --test, -t: Enter command line mode to enter a limbo repl.
+* --hook: Specify the hook to test. (Defaults to "message").
+* -c: Run a single command.
+* --database, -d: Where to store the limbo tinydb database. Defaults to log.json.
+* --pluginpath, -pp: The path where limbo should look to find its plugins (defaults to /plugins).
+
+## Environment Variables
+
+* SLACK_TOKEN: Slack API token. Required.
+* LIMBO_LOGLEVEL: The logging level. Defaults to INFO.
+* LIMBO_LOGFILE: File to log info to. Defaults to none.
+* LIMBO_LOGFORMAT: Format for log messages. Defaults to `%(asctime)s:%(levelname)s:%(name)s:%(message)s`.
+* LIMBO_PLUGINS: Comma-delimited string of plugins to load. Defaults to loading all plugins in the plugins directory (which defaults to "/plugins")
+
 ## Commands
 
 It's super easy to add your own commands! Just create a python file in the plugins directory with an `on_message` function that returns a string.
@@ -31,6 +47,7 @@ These are the current default plugins:
 * [map](https://github.com/llimllib/limbo/wiki/Map-Plugin)
 * [stock](https://github.com/llimllib/limbo/wiki/Stock-Plugin)
 * [stockphoto](https://github.com/llimllib/limbo/wiki/Stock-Photo-Plugin)
+* [urban](https://github.com/llimllib/limbo/wiki/Urban)
 * [weather](https://github.com/llimllib/limbo/wiki/Weather-Plugin)
 * [wiki](https://github.com/llimllib/limbo/wiki/Wiki-Plugin)
 * [youtube](https://github.com/llimllib/limbo/wiki/Youtube-Plugin)
@@ -47,3 +64,8 @@ These are the current default plugins:
 * [@MathyV](https://github.com/MathyV)
 * [@stopspazzing](https://github.com/stopspazzing)
 * [@noise](https://github.com/noise)
+* [@drewp](https://github.com/drewp)
+* [@TetraEtc](https://github.com/TetraEtc)
+* [@LivingInSyn](https://github.com/LivingInSyn)
+* [@reversegremlin](https://github.com/reversegremlin)
+* [@adamghill](https://github.com/adamghill)

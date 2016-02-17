@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
+from collections import namedtuple
 import logging
 from .mock_handler import MockHandler
-from .SearchList import SearchList, User
 import os
 import sqlite3
 import tempfile
@@ -17,6 +17,9 @@ import limbo
 # TODO: test init_plugins __doc__ handling
 # TODO: test plugin that throws exception (on import, init and message)
 
+# copied from slackrtm
+User = namedtuple('User', 'server name id real_name tz')
+
 DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT = os.path.split(DIR)[0]
 
@@ -24,11 +27,39 @@ os.environ["LIMBO_LOGFILE"] = "/tmp/deleteme"
 
 def test_plugin_success():
     hooks = limbo.init_plugins("test/plugins")
-    eq_(len(hooks), 2)
+    eq_(len(hooks), 4)
     assert "message" in hooks
     assert isinstance(hooks, dict)
     assert isinstance(hooks["message"], list)
     eq_(len(hooks["message"]), 2)
+
+def test_config_plugin_none_success():
+    hooks = limbo.init_plugins("test/plugins", None)
+    eq_(len(hooks), 4)
+    assert "message" in hooks
+    assert isinstance(hooks, dict)
+    assert isinstance(hooks["message"], list)
+    eq_(len(hooks["message"]), 2)
+
+def test_config_plugin_empty_string_success():
+    hooks = limbo.init_plugins("test/plugins", "")
+    eq_(len(hooks), 4)
+    assert "message" in hooks
+    assert isinstance(hooks, dict)
+    assert isinstance(hooks["message"], list)
+    eq_(len(hooks["message"]), 2)
+
+def test_config_plugin_success():
+    hooks = limbo.init_plugins("test/plugins", "echo,loop")
+    eq_(len(hooks), 2)
+    assert "message" in hooks
+    assert isinstance(hooks, dict)
+    assert isinstance(hooks["message"], list)
+    eq_(len(hooks["message"]), 1)
+
+def test_config_plugin_doesnt_exist():
+    hooks = limbo.init_plugins("test/plugins", "doesnotexist")
+    eq_(len(hooks), 0)
 
 def test_plugin_invalid_dir():
     try:
@@ -56,9 +87,11 @@ def test_missing_hook():
 # test handle_message
 
 def test_handle_message_subtype():
+    msg = u"!echo Iñtërnâtiônàlizætiøn"
     server = limbo.FakeServer()
-    eq_(limbo.handle_message({"subtype": "bot_message"}, server), None)
-    eq_(limbo.handle_message({"subtype": "message_changed"}, server), None)
+    event = {"bot_id": "1", "text": msg}
+    event["subtype"] = "message_changed"
+    eq_(limbo.handle_message(event, server), None)
 
 def test_handle_message_ignores_self():
     server = limbo.FakeServer()
@@ -72,7 +105,7 @@ def test_handle_message_ignores_slackbot():
 
 def test_handle_message_basic():
     msg = u"!echo Iñtërnâtiônàlizætiøn"
-    event = {"user": "msguser", "text": msg}
+    event = {"user": "2", "text": msg}
 
     hooks = limbo.init_plugins("test/plugins")
     server = limbo.FakeServer(hooks=hooks)
@@ -84,13 +117,22 @@ def test_handle_message_basic():
 def test_handle_message_slack_user_nil():
     msg = u"!echo Iñtërnâtiônàlizætiøn"
     event = {"user": "msguser", "text": msg}
-    users = SearchList([User(None, "nobody", 0, "", 0)])
+    users = {"0": User(None, "nobody", 0, "", 0)}
 
     hooks = limbo.init_plugins("test/plugins")
     slack = limbo.FakeSlack(users=users)
     server = limbo.FakeServer(slack=slack, hooks=hooks)
 
     eq_(limbo.handle_message(event, server), None)
+
+def test_handle_bot_message():
+    msg = u"!echo Iñtërnâtiônàlizætiøn bot"
+    event = {"bot_id": "1", "text": msg, "subtype": "bot_message"}
+
+    hooks = limbo.init_plugins("test/plugins")
+    server = limbo.FakeServer(hooks=hooks)
+
+    eq_(limbo.handle_message(event, server), msg)
 
 def test_init_db():
     tf = tempfile.NamedTemporaryFile()
@@ -103,3 +145,11 @@ class FakeSlackClient(object):
 
     def rtm_connect(self):
         return self.connect
+
+def test_loop_hook():
+    hooks = limbo.init_plugins("test/plugins")
+    server = limbo.FakeServer(hooks=hooks)
+    slack = limbo.FakeSlack()
+    limbo.loop(server, test_loop=1)
+
+    eq_(server._loop_plugin_ran, True)
