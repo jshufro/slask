@@ -17,17 +17,15 @@ def spit_back_substitution(input_string, regex_string, sub_string):
 	return response
 
 def on_message(msg, server):
-	text = msg.get("text", "")
+    text = msg.get("text", "")
 
-	response = text
-	if text == 'actually':
-		response = server.slack.server.users[msg["user"]]
+    response = text
 
     # for key in substitutes:
-		# if (server.slack.server.users[msg["user"]] == 'mha'):
+		# if (msg["user"]) == 'gsivan'):
 		# 	response = spit_back_substitution(response, key, substitutes[key])
 
-	if response != text:
-		return 'Are you sure you didn\'t mean "{0}"?\n'.format(response)
-	else:
-		return
+    if response != text:
+    	return 'Are you sure you didn\'t mean "{0}"?\n'.format(response)
+    else:
+    	return
