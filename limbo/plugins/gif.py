@@ -33,17 +33,10 @@ def gif(searchterm, unsafe=False):
 
     result = requests.get(searchurl, headers={"User-agent": useragent}).text
 
-    gifs = list(map(unescape, re.findall(r"var u='(.*?)'", result)))
+    gifs = list(map(unescape, re.findall(r"imgres\?imgurl=(.*?)&amp;", result)))
     shuffle(gifs)
 
-    if gifs:
-        gif = gifs[0]
-        try:
-            return unquote(gif[:gif.index('&amp;imgrefurl')])
-        except ValueError:
-            return unquote(gif)
-    else:
-        return ""
+    return gifs[0] if gifs else ""
 
 def on_message(msg, server):
     text = msg.get("text", "")

@@ -37,18 +37,10 @@ def image(searchterm, unsafe=False):
 
     result = requests.get(searchurl, headers={"User-agent": useragent}).text
 
-    images = list(map(unescape, re.findall(r"var u='(.*?)'", result)))
+    images = list(map(unescape, re.findall(r"imgres\?imgurl=(.*?)&amp;", result)))
     shuffle(images)
 
-    if images:
-        image = images[0]
-        try:
-            return unquote(image[:image.index('&amp;imgrefurl')])
-        except ValueError:
-            LOG.warn(image, exc_info=True)
-            return unquote(image)
-    else:
-        return ""
+    return images[0] if images else ""
 
 def on_message(msg, server):
     text = msg.get("text", "")
