@@ -22,8 +22,8 @@ def on_message(msg, server):
     response = text
 
     for key in substitutes:
-		logger.log(server.slack.server.users)
-		logger.log(msg["user"])
+		logger.info(server.slack.server.users)
+		logger.info(msg["user"])
 		# if (msg["user"] == 'mha'):
 		# 	response = spit_back_substitution(response, key, substitutes[key])
 
