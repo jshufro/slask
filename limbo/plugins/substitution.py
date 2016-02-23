@@ -22,8 +22,10 @@ def on_message(msg, server):
     response = text
 
     for key in substitutes:
-		if (msg["user"] == 'mha'):
-			response = spit_back_substitution(response, key, substitutes[key])
+		print server.slack.server.users
+		print msg["user"]
+		# if (msg["user"] == 'mha'):
+		# 	response = spit_back_substitution(response, key, substitutes[key])
 
     if response != text:
     	return 'Are you sure you didn\'t mean "{0}"?\n'.format(response)
