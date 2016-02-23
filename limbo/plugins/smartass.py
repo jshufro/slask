@@ -2,7 +2,7 @@ import random
 import json
 
 P = .005
-P_GOOB = .15
+P_GOOB = .1
 MIN_WORDS = 5
 
 replacements = ["mymom", "gooby", "pls", "dolan", "appnexus", "opt"]
@@ -21,8 +21,12 @@ def random_response(text, user):
     responses.append("That sounds wrong, {}".format(user))
     responses.append("{}, do you even know what you're talking about?".format(user))
     responses.append("{}... just no".format(user))
-    for s in replacements:
-        responses.append("or... " + text.replace(" " + word + " ", " " + s + " "))
+    responses.append("Hey, {}, keep up the good work.".format(user))
+    responses.append("Everyone, did you know that {} is awesome?".format(user))
+    responses.append("my #mymom would like to disagree".format(user))
+    responses.append("{}, that's pretty awesome.".format(user))
+    # for s in replacements:
+    #     responses.append("or... " + text.replace(" " + word + " ", " " + s + " "))
 
     return random.choice(responses)
 
