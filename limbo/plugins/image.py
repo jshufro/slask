@@ -33,7 +33,7 @@ def image(searchterm, unsafe=False):
     searchurl = "https://www.google.com/search?tbm=isch&q={0}{1}".format(searchterm, safe)
 
     # this is an old iphone user agent. Seems to make google return good results.
-    useragent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+    useragent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"
 
     result = requests.get(searchurl, headers={"User-agent": useragent}).text
 

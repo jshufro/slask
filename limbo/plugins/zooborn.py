@@ -18,7 +18,7 @@ def on_message(msg, server):
     url = 'http://www.zooborns.com/zooborns/page/{}/'.format(page)
 
     r = requests.get(url)
-    soup = BeautifulSoup(r.text)
+    soup = BeautifulSoup(r.text, "html5lib")
     img_links = soup.find_all('a', class_='asset-img-link')
     shuffle(img_links)
     for img_link in img_links:
