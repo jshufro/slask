@@ -105,7 +105,7 @@ def run_hook(hooks, hook, *args):
         try:
             h = hook(*args)
             if h:
-                responses.append(h)
+                responses.append(h.decode('utf-8'))
         except:
             logger.warning("Failed to run plugin {0}, module not loaded".format(hook))
             logger.warning("{0}".format(sys.exc_info()[0]))
