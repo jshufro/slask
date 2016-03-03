@@ -4,6 +4,7 @@
 
 import re
 import requests
+import sys
 from requests.auth import HTTPBasicAuth
 
 from limbo import conf
@@ -74,19 +75,21 @@ def opt_status(text):
         verify=False)
     if response.status_code != 200:
         return "Error"
-    data = eval(response.text)
-    reply = ''
-    for stat in data[1:]:
-        if stat[0] != "OK":
-            reply += "{host}: {service}\tStatus: {status}\tMessage: {msg}\n".format(
-                host=stat[-1],
-                service=stat[0],
-                status=stat[1],
-                msg=stat[2])
-    if not reply:
-        return "But Nagios ain't one"
-    return '\n```' + reply + '```'
-
+    try:
+        data = eval(response.text)
+        reply = ''
+        for stat in data[1:]:
+            if stat[0] != "OK":
+                reply += "{host}: {service}\tStatus: {status}\tMessage: {msg}\n".format(
+                    host=stat[-1],
+                    service=stat[0],
+                    status=stat[1],
+                    msg=stat[2])
+        if not reply:
+            return "But Nagios ain't one"
+        return '\n```' + reply + '```'
+    except:
+        return "Error {0}".format(sys.exc_info()[0])
 
 def on_message(msg, server):
     text = msg.get("text", "")
