@@ -3,11 +3,13 @@
 !fakeok <service> <host>: Fake OK result for nagios"""
 
 import re
+
 import requests
-import sys
 from requests.auth import HTTPBasicAuth
+from requests.exceptions import ReadTimeout
 
 from limbo import conf
+
 nagios_user = conf.nagios_user
 nagios_pass = conf.nagios_pass
 
@@ -69,27 +71,31 @@ def opt_status(text):
     if not match:
         return False
     url = "https://multimonitor.nym2.adnxs.net/check_mk/view.py?service=etl-optimization&host=.%2A%5C.prod%5C..%2A&view_name=allprodservices&output_format=python"
-    response = requests.get(
-        url,
-        auth=HTTPBasicAuth(nagios_user, nagios_pass),
-        verify=False)
-    if response.status_code != 200:
-        return "Error"
+    response = None
     try:
-        data = eval(response.text)
-        reply = ''
-        for stat in data[1:]:
-            if stat[0] != "OK":
-                reply += "{host}: {service}\tStatus: {status}\tMessage: {msg}\n".format(
-                    host=stat[-1],
-                    service=stat[0],
-                    status=stat[1],
-                    msg=stat[2])
-        if not reply:
-            return "But Nagios ain't one"
-        return '\n```' + reply + '```'
-    except:
-        return "Error {0}".format(sys.exc_info()[0])
+        response = requests.get(
+            url,
+            auth=HTTPBasicAuth(nagios_user, nagios_pass),
+            verify=False,
+            timeout=10)
+    except ReadTimeout:
+        return "Error: Timed out"
+
+    if not response or response.status_code != 200:
+        return "Error"
+
+    data = eval(response.text)
+    reply = ''
+    for stat in data[1:]:
+        if stat[0] != "OK":
+            reply += "{host}: {service}\tStatus: {status}\tMessage: {msg}\n".format(
+                host=stat[-1],
+                service=stat[0],
+                status=stat[1],
+                msg=stat[2])
+    if not reply:
+        return "But Nagios ain't one"
+    return '\n```' + reply + '```'
 
 def on_message(msg, server):
     text = msg.get("text", "")
