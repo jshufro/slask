@@ -161,7 +161,7 @@ def handle_message(event, server):
         return
 
     # grep functionality
-    if "| grep" in event['text'] and str.startswith(event['text'], '!'):
+    if "| grep" in event['text'] and event['text'].startswith(prefix='!'):
         try:
             components = event['text'].split('|')
             source_query = components[0].rstrip()
