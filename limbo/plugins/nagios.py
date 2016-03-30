@@ -70,7 +70,7 @@ def opt_status(text):
     match = re.match(r"!99 problems\s*$", text)
     if not match:
         return False
-    url = "https://multimonitor.nym2.adnxs.net/check_mk/view.py?service=etl-optimization&host=.%2A%5C.prod%5C..%2A&view_name=allprodservices&output_format=python"
+    url = "https://multimonitor.nym2.adnxs.net/check_mk/view.py?host=.%2A%5C.bm-etl-optimization.prod%5C..%2A%20&view_name=allunokayprodservices&service=etl-optimization&st1=on&output_format=python"
     response = None
     try:
         response = requests.get(
