@@ -87,12 +87,11 @@ def opt_status(text):
     data = eval(response.text)
     reply = ''
     for stat in data[1:]:
-        if stat[0] != "OK":
-            reply += "{host}: {service}\tStatus: {status}\tMessage: {msg}\n".format(
-                host=stat[-1],
-                service=stat[0],
-                status=stat[1],
-                msg=stat[2])
+        reply += "{host}: {service}\tStatus: {status}\tMessage: {msg}\n".format(
+            host=stat[0],
+            status=stat[1],
+            service=stat[2],
+            msg=stat[3])
     if not reply:
         return "But Nagios ain't one"
     return '\n```' + reply + '```'
