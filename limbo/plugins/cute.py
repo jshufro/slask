@@ -51,8 +51,6 @@ def cute_response(text):
     if not match:
         return False
 
-    response = ""
-
     if match.group(1):
         count = int(match.group(1))
     else:
@@ -61,7 +59,7 @@ def cute_response(text):
     count = min(len(LIB), count)
 
     cutes = []
-
+    cuteness = random.choice(LIB)
     for i in range(count):
         while cuteness in cutes:
             cuteness = random.choice(LIB)
