@@ -39,10 +39,10 @@ LIB = [
     "http://i98.photobucket.com/albums/l269/autumn_10_2006/cute-kitten.jpg",
     "http://i.imgur.com/dkI0lsX.jpg",
     "http://media.steampowered.com/steamcommunity/public/images/avatars/ab/aba959be0200c086035ea821ffcf1a0caff7574a_full.jpg",
-    "http://speckycdn.sdm.netdna-cdn.com/wp-content/uploads/2012/03/Cute-kitten.jpg>",
-    "http://media.steampowered.com/steamcommunity/public/images/avatars/ab/aba959be0200c086035ea821ffcf1a0caff7574a_full.jpg>",
-    "http://images4.fanpop.com/image/photos/20600000/Cute-Wallpaper-teddybear64-20682571-1280-1024.jpg>",
-    "https://vanosslife.files.wordpress.com/2013/04/dsc_0309.jpg>",
+    "http://speckycdn.sdm.netdna-cdn.com/wp-content/uploads/2012/03/Cute-kitten.jpg",
+    "http://media.steampowered.com/steamcommunity/public/images/avatars/ab/aba959be0200c086035ea821ffcf1a0caff7574a_full.jpg",
+    "http://images4.fanpop.com/image/photos/20600000/Cute-Wallpaper-teddybear64-20682571-1280-1024.jpg",
+    "https://vanosslife.files.wordpress.com/2013/04/dsc_0309.jpg",
 ]
 
 
@@ -58,10 +58,16 @@ def cute_response(text):
     else:
         count = 1
 
-    for i in range(count):
-        response += random.choice(LIB) + '\n'
+    count = min(len(LIB), count)
 
-    return response
+    cutes = []
+
+    for i in range(count):
+        while cuteness in cutes:
+            cuteness = random.choice(LIB)
+        cutes.append(cuteness)
+
+    return '\n'.join(cutes)
 
 def on_message(msg, server):
     text = msg.get("text", "")
