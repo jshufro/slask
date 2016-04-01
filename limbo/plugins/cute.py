@@ -53,7 +53,10 @@ def cute_response(text):
 
     response = ""
 
-    count = int(match.group(1)) or 1
+    if match.group(1):
+        count = int(match.group(1))
+    else:
+        count = 1
 
     for i in range(count):
         response += random.choice(LIB) + '\n'
