@@ -4,7 +4,9 @@
 !host <number|host_name|regex> : list tasks running on matching host(s)
 !job logs <job_id> : logs for all tasks of this job
 !task logs <task_id>: fetch task logs
-!tasks [running|completed|failed|queued|killed] <job_id>: task statuses for job"""
+!tasks [running|completed|failed|queued|killed] <job_id>: task statuses for job
+!lazyhost : finds all hosts that are not working on any tasks.
+"""
 
 from datetime import datetime, timedelta
 import subprocess
