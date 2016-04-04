@@ -212,7 +212,7 @@ def grep_scheduler_log(body):
 
 
 ALL = [job_cache, tasks, host_tasks, last_run_jobs,
-       task_logs, job_logs, grep_scheduler_log, overspend]
+       task_logs, job_logs, grep_scheduler_log, overspend, lazy_host]
 
 
 def on_message(msg, server):
