@@ -186,9 +186,7 @@ def lazy_host(body):
             ORDER BY 1
             ;"""
 
-    exp = re.compile('!lazyhost(.*)?', re.IGNORECASE)
-    match = exp.match(body.lower())
-    if not match:
+    if not body.startswith('!lazyhost'):
         return False
     command_str = 'echo "' + query + '" | ' + DB
     result = subprocess.check_output(command_str, shell=True)
