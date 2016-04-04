@@ -178,6 +178,24 @@ def job_logs(body):
     return "```" + "\n".join(urls) + "```"
 
 
+def lazy_host(body):
+    query = """SELECT t1.host FROM (SELECT DISTINCT(host) FROM optimization.work_queue_task) t1
+            LEFT JOIN (select host, max(insert_time) from optimization.work_queue_task
+            WHERE status = 'running' GROUP BY 1) t2
+            ON t1.host = t2.host WHERE t2.host IS NULL
+            ORDER BY 1
+            ;"""
+
+    exp = re.compile('!lazyhost(.*)?', re.IGNORECASE)
+    match = exp.match(body.lower())
+    if not match:
+        return False
+    command_str = 'echo "' + query + '" | ' + DB
+    result = subprocess.check_output(command_str, shell=True)
+    if not result:
+        return "No slackers in these parts."
+    return "```" + result + "```"
+
 def grep_scheduler_log(body):
     reg = re.compile('!scheduler log (.*)', re.IGNORECASE)
     match = reg.match(body)
