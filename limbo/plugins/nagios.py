@@ -1,6 +1,8 @@
-"""!99 problems : all etl opt nagios services that are not OK
+"""!99 problems: Alias for status, checks etl-optimization and cacheserver hosts.
+!status (<service>|*)? (<host>|*)?: Get Nagios services that are not OK. * means wildcard.
 !downtime <service> <duration(minutes)> <host> <comment>: set nagios downtime
-!fakeok <service> <host>: Fake OK result for nagios"""
+!fakeok <service> <host>: Fake OK result for nagios
+"""
 
 import re
 
@@ -67,10 +69,33 @@ def fake_ok(text):
     return make_request(url)
 
 def opt_status(text):
-    match = re.match(r"!99 problems\s*$", text)
+    match = re.match(r"!(99\s?problems|status)", text)
     if not match:
         return False
-    url = "https://multimonitor.nym2.adnxs.net/check_mk/view.py?host=.%2A%5C.bm-etl-optimization.prod%5C..%2A%20&view_name=allunokayprodservices&service=etl-optimization&st1=on&output_format=python"
+    text += " * etl-optimization%7Ccacheserver"
+    return status(text)
+
+def status(text):
+    match = re.match(r"!(99\s?problems|status) (.*?) (.*?)", text)
+    if not match:
+        return False
+    url = "https://multimonitor.nym2.adnxs.net/check_mk/view.py?output_format=python&view_name=allunokayprodservices&st1=on"
+
+    should_check = False
+
+    if match.group(2) and match.group(2) != '*':
+        should_check = True
+        service = "&service={service}".format(service=match.group(2))
+        url += service
+
+    if match.group(3) and match.group(3) != '*':
+        should_check = True
+        host = "&host={host}".format(host=match.group(3))
+        url += host
+
+    if not should_check:
+        return "Specify at least one of {host, service}. See !help for more info."
+
     response = None
     try:
         response = requests.get(
@@ -87,15 +112,16 @@ def opt_status(text):
     data = eval(response.text)
     reply = ''
     for stat in data[1:]:
-        reply += "{host}: {service}\tStatus: {status}\tMessage: {msg}\n".format(
+        reply += "{host}: {service}\tStatus: {status}\n".format(
             host=stat[0],
             status=stat[1],
-            service=stat[2],
-            msg=stat[3])
+            service=stat[2])
+        if stat[3]:
+            reply += "Message: {msg}\n".format(msg=stat[3])
     if not reply:
         return "But Nagios ain't one"
     return '\n```' + reply + '```'
 
 def on_message(msg, server):
     text = msg.get("text", "")
-    return set_downtime(text) or opt_status(text) or fake_ok(text)
+    return set_downtime(text) or opt_status(text) or fake_ok(text) or status(text)
