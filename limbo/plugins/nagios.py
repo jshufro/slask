@@ -69,14 +69,14 @@ def fake_ok(text):
     return make_request(url)
 
 def opt_status(text):
-    match = re.match(r"!(99\s?problems|status)", text)
+    match = re.match(r"!(99\s?problems|status)$", text)
     if not match:
         return False
     text += " * etl-optimization%7Ccacheserver"
     return status(text)
 
 def status(text):
-    match = re.match(r"!(99\s?problems|status) (.*) (.*)", text)
+    match = re.match(r"!(99\s?problems|status) (.*) (.*)$", text)
     if not match:
         return False
     url = "https://multimonitor.nym2.adnxs.net/check_mk/view.py?output_format=python&view_name=allunokayprodservices&st1=on"
