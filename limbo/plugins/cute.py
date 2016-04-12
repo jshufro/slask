@@ -47,6 +47,9 @@ LIB = [
     "https://kittybloger.files.wordpress.com/2013/03/15-really-cute-kittens-9.jpg",
     "https://kittybloger.files.wordpress.com/2013/03/15-really-cute-kittens.jpg",
     "http://images6.fanpop.com/image/photos/33800000/cute-little-white-kitten-cats-33887076-500-460.jpg",
+    "http://static.boredpanda.com/blog/wp-content/uploads/2015/09/cute-hamsters-23__880.jpg",
+    "http://static.boredpanda.com/blog/wp-content/uploads/2015/09/cute-hamsters-57__880.jpg",
+    
 ]
 
 
