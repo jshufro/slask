@@ -43,6 +43,10 @@ LIB = [
     "http://media.steampowered.com/steamcommunity/public/images/avatars/ab/aba959be0200c086035ea821ffcf1a0caff7574a_full.jpg",
     "http://images4.fanpop.com/image/photos/20600000/Cute-Wallpaper-teddybear64-20682571-1280-1024.jpg",
     "https://vanosslife.files.wordpress.com/2013/04/dsc_0309.jpg",
+    "https://kittybloger.files.wordpress.com/2013/03/15-really-cute-kittens-14.jpg",
+    "https://kittybloger.files.wordpress.com/2013/03/15-really-cute-kittens-9.jpg",
+    "https://kittybloger.files.wordpress.com/2013/03/15-really-cute-kittens.jpg",
+    "http://images6.fanpop.com/image/photos/33800000/cute-little-white-kitten-cats-33887076-500-460.jpg",
 ]
 
 
