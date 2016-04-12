@@ -1,4 +1,4 @@
-"""!cute #: get a random cute picture"""
+"""!cute: get a random cute picture"""
 
 import re
 import random
@@ -51,16 +51,11 @@ LIB = [
 
 
 def cute_response(text):
-    match = re.match(r'!cute ?([0-9])?', text)
+    match = re.match(r'!cute', text)
     if not match:
         return False
 
-    if match.group(1):
-        count = int(match.group(1))
-    else:
-        count = 1
-
-    count = min(len(LIB), count)
+    count = random.randint(1, 3) # slack limits rendering to 3 links.
 
     cutes = []
     cuteness = random.choice(LIB)
