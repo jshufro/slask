@@ -11,6 +11,7 @@ import logging
 
 LOG = logging.getLogger(__name__)
 LAST_MESSAGE = ""
+USERAGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"
 
 def octal_to_html_escape(re_match):
     # an octal escape of the form '\75' (which ought to become '%3d', the
@@ -26,18 +27,17 @@ def unescape(url):
     # google uses octal escapes for god knows what reason
     return re.sub(r"\\..", octal_to_html_escape, url)
 
-def image(searchterm, unsafe=False):
+def image(searchterm, unsafe=False, isgif=False):
     searchterm = quote(searchterm)
 
-    safe = "&safe=" if unsafe else "&safe=active"
-    searchurl = "https://www.google.com/search?tbm=isch&q={0}{1}".format(searchterm, safe)
+    safe = "" if unsafe else "&safe=active"
+    gif = "&tbs=itp:animated" if isgif else ""
+    searchurl = "https://www.google.com/search?tbm=isch&q={0}{1}{2}".format(searchterm, safe, gif)
 
-    # this is an old iphone user agent. Seems to make google return good results.
-    useragent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"
+    result = requests.get(searchurl, headers={"User-agent": USERAGENT}).text
 
-    result = requests.get(searchurl, headers={"User-agent": useragent}).text
-
-    images = list(map(unescape, re.findall(r"imgres\?imgurl=(.*?)&amp;", result)))
+    images = re.findall(r"\"ou\":\"(.*?)\",", result)
+    # images = list(map(unescape, re.findall(r"\"ou\":\"(.*?)\",", result)))
     shuffle(images)
 
     return images[0] if images else ""
@@ -49,13 +49,26 @@ def on_message(msg, server):
         return image("dolan comic")
 
     searchterm = None
+    isgif = False
 
+    # image
     match = re.findall(r"!image (.*)", text)
     if match:
         searchterm = LAST_MESSAGE + match[0]
+
+    # plus image
     match = re.findall(r"!plus (.*)", text)
     if match:
         searchterm = match[0]
+
+    # gif
+    match = re.findall(r"!gif (.*)", text)
+    if match:
+        searchterm = match[0]
+        isgif = True
+
+    # search
     if searchterm:
-        return image(searchterm.encode("utf8"))
+        return image(searchterm.encode("utf8"), isgif=isgif)
+
     return False
