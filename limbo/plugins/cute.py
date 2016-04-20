@@ -49,6 +49,15 @@ LIB = [
     "http://images6.fanpop.com/image/photos/33800000/cute-little-white-kitten-cats-33887076-500-460.jpg",
     "http://static.boredpanda.com/blog/wp-content/uploads/2015/09/cute-hamsters-23__880.jpg",
     "http://static.boredpanda.com/blog/wp-content/uploads/2015/09/cute-hamsters-57__880.jpg",
+    "https://shechive.files.wordpress.com/2011/06/1306786293844880.gif?w\u003d500\u0026h\u003d225",
+    "https://media3.giphy.com/media/DAX0BHNOatEd2/200_s.gif",
+    "https://45.media.tumblr.com/9dee97d98805c6dcf041cf71f37d845b/tumblr_n4pm58aN5A1sqa80io1_500.gif",
+    "http://49.media.tumblr.com/3b5a30ce9cc829b9c662fc903b762288/tumblr_nmysxjzXKb1snyhk8o6_400.gif",
+    "http://www.cutecatgifs.com/wp-content/uploads/2013/11/little_guy_sleeping_in_lap.gif",
+    "http://i.imgur.com/IDYm3.gif",
+    "http://static.fjcdn.com/pictures/Its+so+cute+look+at+the+little+kitten+3_d70942_4283917.jpg",
+    "http://24.media.tumblr.com/5399c3a0a26bcd646e491061fe688280/tumblr_mz1sf8xzgu1toww91o1_500.gif",
+    "https://img.pandawhale.com/post-10724-Striped-Silver-Tabby-Cat-Cuddl-RfxK.gif",
     
 ]
 
