@@ -9,6 +9,7 @@ import re
 import requests
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import ReadTimeout
+import random
 
 from limbo import conf
 
@@ -119,7 +120,11 @@ def status(text):
         if stat[3]:
             reply += "Message: {msg}\n".format(msg=stat[3])
     if not reply:
-        return "But Nagios ain't one"
+        r = random.randint(0, 1)
+        if (r > 0):
+            return "But Goob ain't one"
+        else:
+            return "But Nagios ain't one"
     return '\n```' + reply + '```'
 
 def on_message(msg, server):
