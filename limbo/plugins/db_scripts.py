@@ -22,7 +22,7 @@ def job_cache(body):
                 from work_queue_job_cache
                 where deleted = 0;"""
 
-    reg = re.compile('^!job[\s|_](cache|$)\s*((?P<fail>failed))?', re.IGNORECASE)
+    reg = re.compile('^!job[\s|_](cache|\$)\s*((?P<fail>failed))?', re.IGNORECASE)
     match = reg.match(body)
     if not match:
         return False
