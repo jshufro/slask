@@ -16,6 +16,57 @@ from limbo import conf
 
 DB = 'mysql -A -u%s -p%s -hmysql-budget-slave.prod.adnxs.net -D optimization' % (conf.db_user, conf.db_pass)
 
+def get_host_task_pairs(job_id):
+    query = """select host, work_task_id
+                from work_queue_task
+                where job_id = %s;"""
+
+    cmd = 'echo "' + (query % job_id) + '" | ' + DB
+    result = subprocess.check_output(cmd, shell=True)
+    result_list = result.decode().rstrip().split('\n')
+
+    host_task_pairs = []
+    for i in range(1, len(result_list)):
+        fields = result_list[i].split('\t')
+        tuple = (fields[0], fields[1])
+        host_task_pairs.append(tuple)
+
+    return host_task_pairs
+
+def search_job_logs(job_id, search_term):
+    host_task_pairs = get_host_task_pairs(job_id)
+
+    response = ""
+
+    for host, task_id in host_task_pairs:
+        grep_cmd = "grep '%s' /var/log/adnexus/work_queue_tasks/task_%s" % (search_term, task_id)
+        option = "-oStrictHostKeyChecking=no"
+
+        ssh = subprocess.Popen(["ssh", option, host, grep_cmd], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        result = ssh.stdout.readlines()
+        if not result:
+            result = ssh.stderr.readlines()
+
+        if result:
+            response += '\n'.join(result)
+        else:
+            response += 'Nothing for: %s %s\n' % (host, task_id)
+
+    if response:
+        return '```%s```' % response
+    else:
+        return "No results found."
+
+def job_search(body):
+    reg = re.compile('!job_search\s(\d+)\s(.*)', re.IGNORECASE)
+    match = reg.match(body)
+    if not match:
+        return False
+    job_id = match.group(1)
+    search_term = match.group(2)
+    return search_job_logs(job_id, search_term)
+
 
 def job_cache(body):
     query = """select id, job_id, handler, insert_time
@@ -212,7 +263,7 @@ def grep_scheduler_log(body):
 
 
 ALL = [job_cache, tasks, host_tasks, last_run_jobs,
-       task_logs, job_logs, grep_scheduler_log, overspend, lazy_host]
+       task_logs, job_logs, grep_scheduler_log, overspend, lazy_host, job_search]
 
 
 def on_message(msg, server):
