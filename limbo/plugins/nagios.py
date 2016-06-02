@@ -64,9 +64,9 @@ def fake_ok(text):
         hostnumber = int(host)
 
         if (hostnumber == 3):
-            host = "03.cachserver.prod.nym2"
+            host = "03.cacheserver.prod.nym2"
         elif (hostnumber == 4):
-            host = "04.cachserver.prod.lax1"
+            host = "04.cacheserver.prod.lax1"
         else:
             host = "{}.bm-etl-optimization.prod.lax1".format(host)
     except ValueError:
