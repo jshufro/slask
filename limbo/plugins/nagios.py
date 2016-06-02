@@ -61,8 +61,14 @@ def fake_ok(text):
     if not service or not host:
         return "All fields required: service, host"
     try:
-        int(host)
-        host = "{}.bm-etl-optimization.prod.lax1".format(host)
+        hostnumber = int(host)
+
+        if (hostnumber == 3):
+            host = "03.cachserver.prod.nym2"
+        elif (hostnumber == 4):
+            host = "04.cachserver.prod.lax1"
+        else:
+            host = "{}.bm-etl-optimization.prod.lax1".format(host)
     except ValueError:
         pass
     url = BASE_URL + FAKE_OK
