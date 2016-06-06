@@ -52,6 +52,12 @@ def set_downtime(text):
     url = url.format(host=host, service=service, dur=duration, comment=comment)
     return make_request(url)
 
+def ok_etl_opt_80(text):
+    match = re.match(r"^!fakeok80\s?", text, re.IGNORECASE)
+    if not match:
+        return False
+    return fake_ok("!fakeok etl-optimization 80")
+
 def fake_ok(text):
     match = re.match(r"^!fakeok\s+(?P<service>[\w-]+)\s+(?P<host>[\w\-\.]+)\s*$", text, re.IGNORECASE)
     if not match:
@@ -135,4 +141,4 @@ def status(text):
 
 def on_message(msg, server):
     text = msg.get("text", "")
-    return set_downtime(text) or opt_status(text) or fake_ok(text) or status(text)
+    return set_downtime(text) or opt_status(text) or ok_etl_opt_80(text) or fake_ok(text) or status(text)
