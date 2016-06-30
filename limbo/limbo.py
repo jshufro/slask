@@ -34,7 +34,7 @@ class InvalidPluginDir(Exception):
         super(InvalidPluginDir, self).__init__(message)
 
 def init_log(config):
-    loglevel = config.get("loglevel", logging.INFO)
+    loglevel = config.get("loglevel", logging.DEBUG)
     logformat = config.get("logformat", '%(asctime)s:%(levelname)s:%(name)s:%(message)s')
     if config.get("logfile"):
         logging.basicConfig(filename=config.get("logfile"), format=logformat, level=loglevel)
@@ -80,6 +80,9 @@ def init_plugins(plugindir, plugins_to_load=None):
         try:
             mod = importlib.import_module(plugin)
             modname = mod.__name__
+            logger.info(modname)
+            logger.info(" ".join(dir(mod)))
+            logger.info("^^ dir mod")
             for hook in re.findall("on_(\w+)", " ".join(dir(mod))):
                 hookfun = getattr(mod, "on_" + hook)
                 logger.debug("plugin: attaching %s hook for %s", hook, modname)

@@ -28,3 +28,5 @@ wolframalpha
 parsedatetime
 textblob
 slackrtm==0.2.1
+pillow==3.3.0
+imgurpython
