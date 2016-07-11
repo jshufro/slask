@@ -16,23 +16,28 @@ def stockprice(ticker):
     url = "https://www.google.com/finance?q={0}"
     soup = BeautifulSoup(requests.get(url.format(quote(ticker))).text, "html5lib")
 
+
     try:
-        company, ticker = re.findall(u"^(.+?)\xa0\xa0(.+?)\xa0", soup.text, re.M)[0]
+        title = re.match(r'(.*?)quotes', soup.title.string).group(1)
     except IndexError:
         logging.info("Unable to find stock {0}".format(ticker))
         return ""
-    price = soup.select("#price-panel .pr span")[0].text
-    change, pct = soup.select("#price-panel .nwp span")[0].text.split()
-    pct.strip('()')
+    try:
+        price = soup.select("#price-panel .pr span")[0].text
+        change, pct = soup.select("#price-panel .nwp span")[0].text.split()
+        pct.strip('()')
+        price_info = "{} {} {}".format(price, change, pct)
+    except IndexError:
+        price_info = soup.select("#price-panel")[0].text
 
-    emoji = ":chart_with_upwards_trend:" if change.startswith("+") else ":chart_with_downwards_trend:"
+    emoji = ":chart_with_upwards_trend:" if ("+") in price_info else ":chart_with_downwards_trend:"
 
-    return "{0} {1} {2}: {3} {4} {5} {6}".format(emoji, company, ticker, price, change, pct, emoji)
+    return "{} {}: {} {}".format(emoji, title, price_info, emoji)
 
 
 def on_message(msg, server):
     text = msg.get("text", "")
-    matches = re.findall(r"\$[a-zA-Z]\w{0,4}", text)
+    matches = re.findall(r"\$\w+", text)
     if not matches:
         return
 
