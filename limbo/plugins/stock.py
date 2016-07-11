@@ -28,7 +28,7 @@ def stockprice(ticker):
         pct.strip('()')
         price_info = "{} {} {}".format(price, change, pct)
     except IndexError:
-        price_info = soup.select("#price-panel")[0].text
+        price_info = soup.select("#price-panel")[0].text.strip()
 
     emoji = ":chart_with_upwards_trend:" if ("+") in price_info else ":chart_with_downwards_trend:"
 
