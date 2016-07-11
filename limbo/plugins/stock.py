@@ -32,7 +32,7 @@ def stockprice(ticker):
 
 def on_message(msg, server):
     text = msg.get("text", "")
-    matches = re.findall(r"\$[a-zA-Z]\w{0,3}", text)
+    matches = re.findall(r"\$[a-zA-Z]\w{0,4}", text)
     if not matches:
         return
 
