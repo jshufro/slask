@@ -1,7 +1,13 @@
+"""box.py
+
+This module represents the box object
+"""
+
 from time import time
 from collections import namedtuple
 
 AnswerTuple = namedtuple('AnswerTuple', 'val ts')
+
 
 class Box(object):
 

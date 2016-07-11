@@ -8,37 +8,66 @@
 !cw clue 1 a - get a single clue
 !cw display - display board
 !cw clear 1 a - clear a clue
+!cw permalink - get a link to image
 """
 
 import re
+import urllib2
+from datetime import datetime
+from cPickle import dump, load
+import logging
+import shutil
+import socket
+
 from imgurpython import ImgurClient
 
-from cw.crossword import Crossword
-from cw.crossword_exception import BoardDimensionException
+from puzcw import Puzzle, BoardDimensionException
 
-PUZZLE = Crossword()
+PUZZLE = Puzzle()
 CLIENT_ID = '480dd133b9e74f1'
 CLIENT_SECRET = '5e69d9f7e87ef10fc2d5ddf3b9fc882135516e3a'
 IMGUR_CLIENT = ImgurClient(CLIENT_ID, CLIENT_SECRET)
+MOTHERLOAD = 'http://www.jacobshufro.com/xwords2/puzs/'
+CACHED_PUZZLE = '/var/goob/saved_cw'
+APACHE_FILE = '/var/www/html/cw.png'
+PERMALINK = socket.gethostname() + '.adnexus.net/cw.png'
+
 
 INVALID_MSG = "Invalid cw functionality, boi"
 PARAM_MSG = "What a blunder. Is your command right?"
+
+logger = logging.getLogger('limbo.limbo')
 
 def format_clues(clues):
     clues = map(lambda x: '%s. %s' % (x.num, x.clue), clues)
     return '\n'.join(clues)
 
-def display(params):
+def save_to_apache_server():
     path = PUZZLE.save_game()
+    shutil.copyfile(path, APACHE_FILE)
+    return path
+
+def display(params):
+    path = save_to_apache_server()
     resp = IMGUR_CLIENT.upload_from_path(path)
     return resp.get('link', 'Hm, no link, try %s' % path)
 
 def new(params):
-    try:
-        PUZZLE.init_game(*params)
-        return display(params)
-    except BoardDimensionException as e:
-        return 'Non square board detected, please pass n and m'
+    global PUZZLE
+
+    logger.info("In new function")
+    day = datetime.now()
+    attempts = 0
+    while attempts < 10:
+        try:
+            url = MOTHERLOAD + day.strftime('%y.%m.%d.puz')
+            logger.info("Crossword URL %s" % url)
+            PUZZLE = Puzzle.from_url(url)
+            return display(params)
+        except urllib2.HTTPError:
+            attempts += 1
+            day = day - timedelta(days=1)
+    return None
 
 def clue(params):
     num, direction = params
@@ -60,19 +89,42 @@ def all_clues(params):
 def submit(params):
     num, direction, word = params
     PUZZLE.submit(num, direction, word)
+    save_to_apache_server()
     return 'Submitted!' #display(params)
 
 def ghost(params):
     num, direction, word = params
     PUZZLE.ghost(num, direction, word)
+    save_to_apache_server()
     return 'Ghosted!' #display(params)
 
 def clear(params):
     num, direction = params
     PUZZLE.clear(num, direction)
+    save_to_apache_server()
     return 'Cleared!' #display(params)
 
-def crossword(cmd):
+def permalink(params):
+    return PERMALINK
+
+def save_to_file():
+    # Copy to apache server
+    # Cache puzzle to file
+    f = open(CACHED_PUZZLE, 'w')
+    dump(PUZZLE, f)
+    f.close()
+
+def load_from_file():
+    try:
+        f = open(CACHED_PUZZLE, 'r')
+        res = load(f)
+        f.close()
+        logger.info("Loaded cached puzzle!")
+        return res
+    except IOError:
+        return None
+
+def evaluate_command(cmd):
     # Match command
     cmd_map = {
         'new': new,
@@ -83,7 +135,8 @@ def crossword(cmd):
         'submit': submit,
         'ghost': ghost,
         'display': display,
-        'clear': clear
+        'clear': clear,
+        'permalink': permalink
     }
     s = cmd.split(' ')
     cmd_name = s[0]
@@ -99,9 +152,23 @@ def crossword(cmd):
             return PARAM_MSG
 
 def on_message(msg, server):
+    global PUZZLE
+
+    # Determine if match
     text = msg.get("text", "")
-    print "In the crossword!!"
     match = re.findall(r"!(?:cw) (.*)", text)
     if not match:
         return
-    return crossword(match[0])
+
+    # Load puzzle from file
+    if not PUZZLE.board:
+        PUZZLE = load_from_file()
+
+    # Evaluate command
+    res = evaluate_command(match[0])
+
+    #Save puzzle to file
+    save_to_file()
+
+    # Return response
+    return res

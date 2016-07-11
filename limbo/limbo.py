@@ -71,6 +71,8 @@ def init_plugins(plugindir, plugins_to_load=None):
     oldpath = copy.deepcopy(sys.path)
     sys.path.insert(0, plugindir)
 
+    logger.info("FOUND NAME: %s" % __name__)
+
     for plugin in plugins:
         if plugins_to_load and plugin not in plugins_to_load:
             logger.debug("skipping plugin {0}, not in plugins_to_load {1}".format(plugin, plugins_to_load))
@@ -80,9 +82,6 @@ def init_plugins(plugindir, plugins_to_load=None):
         try:
             mod = importlib.import_module(plugin)
             modname = mod.__name__
-            logger.info(modname)
-            logger.info(" ".join(dir(mod)))
-            logger.info("^^ dir mod")
             for hook in re.findall("on_(\w+)", " ".join(dir(mod))):
                 hookfun = getattr(mod, "on_" + hook)
                 logger.debug("plugin: attaching %s hook for %s", hook, modname)
