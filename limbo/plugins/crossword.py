@@ -2,9 +2,9 @@
 !cw new [width, height] - new crossword game
 !cw submit 1 a word - submit an answer
 !cw ghost 1 a word - ghost an answer
-!cw across - get all across clues
-!cw down - get all down clues
-!cw all - get all clues
+!cw across [remaining] - get all across clues
+!cw down [remaining] - get all down clues
+!cw all [remaining] - get all clues
 !cw clue 1 a - get a single clue
 !cw display - display board
 !cw clear 1 a - clear a clue
@@ -21,9 +21,9 @@ import socket
 
 from imgurpython import ImgurClient
 
-from puzcw import Puzzle, BoardDimensionException
+from puzcw import Crossword
 
-PUZZLE = Puzzle()
+PUZZLE = Crossword()
 CLIENT_ID = '480dd133b9e74f1'
 CLIENT_SECRET = '5e69d9f7e87ef10fc2d5ddf3b9fc882135516e3a'
 IMGUR_CLIENT = ImgurClient(CLIENT_ID, CLIENT_SECRET)
@@ -31,6 +31,9 @@ MOTHERLOAD = 'http://www.jacobshufro.com/xwords2/puzs/'
 CACHED_PUZZLE = '/var/goob/saved_cw'
 APACHE_FILE = '/var/www/html/cw.png'
 PERMALINK = socket.gethostname() + '.adnexus.net/cw.png'
+CLUE_FMT = "{num}{dir}: {clue}"
+INDENT = ">>>"
+CLUES_HEADER = "*{title}*\n{clues}"
 
 
 INVALID_MSG = "Invalid cw functionality, boi"
@@ -38,9 +41,27 @@ PARAM_MSG = "What a blunder. Is your command right?"
 
 logger = logging.getLogger('limbo.limbo')
 
-def format_clues(clues):
-    clues = map(lambda x: '%s. %s' % (x.num, x.clue), clues)
+def format_clue(clue):
+    res = CLUE_FMT.format(
+            num=clue.num,
+            dir=clue.clue_type.upper(),
+            clue=clue.clue
+        )
+    if clue.submitted:
+        return "~"+res+"~"
+    else:
+        return res
+
+def format_clues(clues, only_remaining=False):
+    if only_remaining:
+        clues = filter(lambda x: not x.submitted, clues)
+    clues = map(format_clue, clues)
     return '\n'.join(clues)
+
+def only_remaining(params):
+    if params and params[0]=='remaining':
+        return True
+    return False
 
 def save_to_apache_server():
     path = PUZZLE.save_game()
@@ -62,7 +83,7 @@ def new(params):
         try:
             url = MOTHERLOAD + day.strftime('%y.%m.%d.puz')
             logger.info("Crossword URL %s" % url)
-            PUZZLE = Puzzle.from_url(url)
+            PUZZLE = Crossword.from_url(url)
             return display(params)
         except urllib2.HTTPError:
             attempts += 1
@@ -71,20 +92,28 @@ def new(params):
 
 def clue(params):
     num, direction = params
-    return PUZZLE.get_clue(num, direction).clue
+    clue = PUZZLE.get_clue(num, direction)
+    return format_clue(clue)
 
 def across(params):
-    resp = "```ACROSS\n%s```"
-    clues = format_clues(PUZZLE.across_clues)
-    return resp % clues
+    clues = format_clues(PUZZLE.across_clues, only_remaining(params))
+    return INDENT + CLUES_HEADER.format(title='ACROSS',
+                                        clues=clues)
 
 def down(params):
-    resp = "```DOWN\n%s```"
-    clues = format_clues(PUZZLE.down_clues)
-    return resp % clues
+    clues = format_clues(PUZZLE.down_clues, only_remaining(params))
+    return INDENT + CLUES_HEADER.format(title='DOWN',
+                                        clues=clues)
 
 def all_clues(params):
-    return across(params) + '\n\n' + down(params)
+    across_clues = format_clues(PUZZLE.across_clues, only_remaining(params))
+    down_clues = format_clues(PUZZLE.down_clues, only_remaining(params))
+    return INDENT \
+            + CLUES_HEADER.format(title='ACROSS',
+                                  clues=across_clues) \
+            + '\n\n' \
+            + CLUES_HEADER.format(title='DOWN',
+                                  clues=down_clues) \
 
 def submit(params):
     num, direction, word = params
