@@ -45,7 +45,7 @@ def format_clue(clue):
     res = CLUE_FMT.format(
             num=clue.num,
             dir=clue.clue_type.upper(),
-            clue=clue.clue
+            clue=clue.clue.encode('utf8')
         )
     if clue.submitted:
         return "~"+res+"~"
@@ -178,6 +178,7 @@ def evaluate_command(cmd):
             return fn(params)
         # Likely a param error!
         except ValueError as e:
+            raise e
             return PARAM_MSG
 
 def on_message(msg, server):
