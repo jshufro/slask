@@ -178,7 +178,7 @@ def evaluate_command(string):
     if cmd_name:
         string = string[cmd_name.end():]
         fn = cmd_map[cmd_name.group()]
-        cmd_name = cmd_name.group() # TODO: dis bad
+        cmd_name = cmd_name.group()
 
     if cmd_name in ["new", "display", "permalink"]:
         string = _remove_leading_whitespace(string)
