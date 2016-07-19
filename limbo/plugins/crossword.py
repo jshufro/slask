@@ -35,8 +35,6 @@ CLUE_FMT = "{num}{dir}: {clue}"
 INDENT = ">>>"
 CLUES_HEADER = "*{title}*\n{clues}"
 
-
-INVALID_MSG = "Invalid cw functionality, boi"
 PARAM_MSG = "What a blunder. Is your command right?"
 
 logger = logging.getLogger('limbo.limbo')
@@ -119,19 +117,19 @@ def submit(params):
     num, direction, word = params
     PUZZLE.submit(num, direction, word)
     save_to_apache_server()
-    return 'Submitted!' #display(params)
+    return 'Submitted %d %s!' % (num, direction) #display(params)
 
 def ghost(params):
     num, direction, word = params
     PUZZLE.ghost(num, direction, word)
     save_to_apache_server()
-    return 'Ghosted!' #display(params)
+    return 'Ghosted %d %s!' % (num, direction) #display(params)
 
 def clear(params):
     num, direction = params
     PUZZLE.clear(num, direction)
     save_to_apache_server()
-    return 'Cleared!' #display(params)
+    return 'Cleared %d %s!' % (num, direction) #display(params)
 
 def permalink(params):
     return PERMALINK
@@ -153,7 +151,11 @@ def load_from_file():
     except IOError:
         return None
 
-def evaluate_command(cmd):
+def _remove_leading_whitespace(string):
+    white = re.match(r"\s*", string)
+    return string[white.end():]
+
+def evaluate_command(string):
     # Match command
     cmd_map = {
         'new': new,
@@ -167,18 +169,100 @@ def evaluate_command(cmd):
         'clear': clear,
         'permalink': permalink
     }
-    s = cmd.split(' ')
-    cmd_name = s[0]
-    params = s[1:]
-    fn = cmd_map.get(cmd_name, None)
-    if fn is None:
-        return INVALID_MSG
-    else:
+
+    string = _remove_leading_whitespace(string)
+    cmd_regex = r"new|display|permalink|all|across|down|clue|submit|ghost|clear"
+    cmd_name = re.match(cmd_regex, string)
+
+    fn = None
+    if cmd_name:
+        string = string[cmd_name.end():]
+        fn = cmd_map[cmd_name.group()]
+        cmd_name = cmd_name.group()
+
+    if cmd_name in ["new", "display", "permalink"]:
+        string = _remove_leading_whitespace(string)
+        if string:
+            return PARAM_MSG
+
         try:
-            return fn(params)
-        # Likely a param error!
+            return fn(string)
+        except ValueError as e:
+            return PARAM_MSG
+
+    if cmd_name in ["across", "down", "all"]:
+        string = _remove_leading_whitespace(string)
+        show_remaining = re.match(r"remaining", string)
+        if show_remaining:
+            string = string[show_remaining.end():]
+            show_remaining = show_remaining.group()
+
+        string = _remove_leading_whitespace(string)
+        if string:
+            return PARAM_MSG
+
+        try:
+            return fn(show_remaining)
+        except ValueError as e:
+            return PARAM_MSG
+
+    string = _remove_leading_whitespace(string)
+    clue_number_regex = r"\d+"
+    clue_number = re.match(clue_number_regex, string)
+    if clue_number:
+        string = string[clue_number.end():]
+        clue_number = clue_number.group()
+    else:
+        return PARAM_MSG
+
+    string = _remove_leading_whitespace(string)
+    direction_regex = r"[adAD]"
+    direction = re.match(direction_regex, string)
+    if direction:
+        string = string[direction.end():]
+        direction = direction.group()
+    else:
+        return PARAM_MSG
+
+    if cmd_name in ["clue", "clear"]:
+        string = _remove_leading_whitespace(string)
+        if string:
+            return PARAM_MSG
+
+        try:
+            return fn([clue_number, direction])
+        except ValueError as e:
+            return PARAM_MSG
+
+    string = _remove_leading_whitespace(string)
+    answer_regex = r"\w+"
+    answer = re.match(answer_regex, string)
+    if answer:
+        string = string[answer.end():]
+        answer = answer.group()
+    if cmd_name in ["submit", "ghost"]:
+        string = _remove_leading_whitespace(string)
+        if string:
+            return PARAM_MSG
+
+        try:
+            return fn([clue_number, direction, answer])
         except ValueError as e:
             raise e
+            return PARAM_MSG
+
+    # should have nothing left now
+    string = _remove_leading_whitespace(string)
+    if string:
+        return PARAM_MSG
+
+    # if cmd_name not found, assume "submit" or "clue"
+    try:
+        if answer:
+            return submit([clue_number, direction, answer])
+        else:
+            return clue([clue_number, direction])
+    except ValueError as e:
             return PARAM_MSG
 
 def on_message(msg, server):
