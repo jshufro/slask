@@ -1,11 +1,11 @@
 """
-!cw new [width, height] - new crossword game
-!cw submit 1 a word - submit an answer
+!cw new [12-25-16] - new crossword game with optionally specified date
+!cw [submit] 1 a word - submit an answer
 !cw ghost 1 a word - ghost an answer
 !cw across [remaining] - get all across clues
 !cw down [remaining] - get all down clues
 !cw all [remaining] - get all clues
-!cw clue 1 a - get a single clue
+!cw [clue] 1 a - get a single clue
 !cw display - display board
 !cw clear 1 a - clear a clue
 !cw permalink - get a link to image
@@ -75,7 +75,13 @@ def new(params):
     global PUZZLE
 
     logger.info("In new function")
-    day = datetime.now()
+
+    day = None
+    if params:
+        day = datetime.strptime(params, '%m-%d-%y')
+    else:
+        day = datetime.now()
+
     attempts = 0
     while attempts < 10:
         try:
