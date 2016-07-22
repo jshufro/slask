@@ -186,7 +186,7 @@ def evaluate_command(string):
         fn = cmd_map[cmd_name.group()]
         cmd_name = cmd_name.group()
 
-    if cmd_name in ["new", "display", "permalink"]:
+    if cmd_name in ["display", "permalink"]:
         string = _remove_leading_whitespace(string)
         if string:
             return PARAM_MSG
@@ -195,6 +195,10 @@ def evaluate_command(string):
             return fn(string)
         except ValueError as e:
             return PARAM_MSG
+
+    if cmd_name in ["new"]:
+        string = _remove_leading_whitespace(string)
+        return fn(string)
 
     if cmd_name in ["across", "down", "all"]:
         string = _remove_leading_whitespace(string)
