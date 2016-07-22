@@ -117,19 +117,19 @@ def submit(params):
     num, direction, word = params
     PUZZLE.submit(num, direction, word)
     save_to_apache_server()
-    return 'Submitted %d %s!' % (num, direction) #display(params)
+    return 'Submitted %s %s!' % (num, direction) #display(params)
 
 def ghost(params):
     num, direction, word = params
     PUZZLE.ghost(num, direction, word)
     save_to_apache_server()
-    return 'Ghosted %d %s!' % (num, direction) #display(params)
+    return 'Ghosted %s %s!' % (num, direction) #display(params)
 
 def clear(params):
     num, direction = params
     PUZZLE.clear(num, direction)
     save_to_apache_server()
-    return 'Cleared %d %s!' % (num, direction) #display(params)
+    return 'Cleared %s %s!' % (num, direction) #display(params)
 
 def permalink(params):
     return PERMALINK
