@@ -36,6 +36,7 @@ INDENT = ">>>"
 CLUES_HEADER = "*{title}*\n{clues}"
 
 PARAM_MSG = "What a blunder. Is your command right?"
+PUZZLE_NOT_FOUND_MSG = "Cannot find puzzle link"
 
 logger = logging.getLogger('limbo.limbo')
 
@@ -92,6 +93,7 @@ def new(params):
         except urllib2.HTTPError:
             attempts += 1
             day = day - timedelta(days=1)
+            return PUZZLE_NOT_FOUND_MSG
     return None
 
 def clue(params):
@@ -212,7 +214,7 @@ def evaluate_command(string):
             return PARAM_MSG
 
         try:
-            return fn(show_remaining)
+            return fn([show_remaining])
         except ValueError as e:
             return PARAM_MSG
 
