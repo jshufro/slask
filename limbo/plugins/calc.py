@@ -1,4 +1,4 @@
-"""!calc <equation> will return the google calculator result for <equation>"""
+"""!calc <equation> will returns the google calculator result for <equation>"""
 from bs4 import BeautifulSoup
 import re
 try:
