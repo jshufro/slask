@@ -1,4 +1,4 @@
-"""!oncall|!pager (add "link" for url to pager rotation page)"""
+"""!oncall|!pager (add "link" for url to pager rotation page boi)"""
 
 import re
 import urllib2
