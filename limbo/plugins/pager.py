@@ -62,10 +62,10 @@ def maestro_pager_response():
     # periods = __get_timeperiods_dict()
     # day_of_week = datetime.now().strftime("%A").lower()
 
-    on_pager_resp = urllib2.urlopen('http://maestro3-api.adnxs.net/nagios-usergroup-map?nagios_usergroup_id=20&pager=1').read()
+    on_pager_resp = urllib2.urlopen('http://maestro3-api.nym1.adnxs.net/nagios-usergroup-map?nagios_usergroup_id=20&pager=1').read()
     on_pagers = __join_oncall_info(json.loads(on_pager_resp)['response']['nagios_usergroup_maps'])
 
-    on_escalation_resp = urllib2.urlopen('http://maestro3-api.adnxs.net/nagios-usergroup-map?nagios_usergroup_id=20&escalation=1').read()
+    on_escalation_resp = urllib2.urlopen('http://maestro3-api.nym1.adnxs.net/nagios-usergroup-map?nagios_usergroup_id=20&escalation=1').read()
     on_escalations = __join_oncall_info(json.loads(on_escalation_resp)['response']['nagios_usergroup_maps'])
 
     on_pager_section = ','.join([' %s' % on_pager for on_pager in on_pagers])
