@@ -187,7 +187,10 @@ def last_run_jobs(body):
 
     command_str = 'echo "' + query + '" | ' + DB
     result = subprocess.check_output(command_str, shell=True)
-    return "```" + result + "```"
+    if result:
+        return "```" + result + "```"
+    else:
+        return "No results"
 
 
 def host_for_task(task):
