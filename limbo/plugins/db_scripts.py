@@ -166,7 +166,7 @@ def host_tasks(body):
 
 
 def last_run_jobs(body):
-    reg = re.compile('^!last\s+(jobs\s+)?((?P<num>\d+))?\s?((?P<handler>\w+))?$', re.IGNORECASE)
+    reg = re.compile('^!last\s+(jobs\s+)?((?P<num>\d+))?\s?((?P<handler>.*?))?$', re.IGNORECASE)
     match = reg.match(body)
     if not match:
         return False
