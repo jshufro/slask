@@ -137,11 +137,17 @@ def tasks(body):
 
 
 def host_tasks(body):
-    query = """select host, job_id, work_task_id, handler, t.insert_time, t.start_time,
+    query = """select t.host, t.job_id, t.work_task_id, j.handler, t.insert_time, t.start_time,
             timediff(now(), t.start_time) as total
-            from work_queue_task t, work_queue_job j
-            where t.job_id = j.id and host %s and t.status = 'running'
-            and t.insert_time >= now() - interval 1 day;"""
+            from work_queue_task t
+            join work_queue_job j
+            on t.job_id = j.id
+            join work_queue_job_cache jc
+            on jc.deleted=0 and t.job_id = jc.job_id
+            where t.host %s
+            and t.status = 'running'
+            and t.insert_time >= now() - interval 1 day
+            ;"""
 
     exp = re.compile('!host (.*)', re.IGNORECASE)
     match = exp.match(body.lower())
