@@ -69,7 +69,7 @@ def job_search(body):
 
 
 def job_cache(body):
-    query = """select id, job_id, handler, insert_time
+    query = """select id, job_id, handler_path, insert_time
                 from work_queue_job_cache
                 where deleted = 0;"""
 
@@ -78,7 +78,7 @@ def job_cache(body):
     if not match:
         return False
     if match.group('fail'):
-        query = """SELECT id as job_id, handler, insert_time, status
+        query = """SELECT id as job_id, handler_path, insert_time, status
                     FROM work_queue_job
                     WHERE status = 'failed' and insert_time >= (now() - interval 90 minute)
                     ORDER BY insert_time desc """
@@ -137,7 +137,7 @@ def tasks(body):
 
 
 def host_tasks(body):
-    query = """select host, job_id, work_task_id, handler, t.insert_time, t.start_time,
+    query = """select host, job_id, work_task_id, handler_path, t.insert_time, t.start_time,
             timediff(now(), t.start_time) as total
             from work_queue_task t, work_queue_job j
             where t.job_id = j.id and host %s and t.status = 'running'
@@ -175,13 +175,13 @@ def last_run_jobs(body):
     # see if specific job type
     handler = match.group('handler') or ''
 
-    query = """SELECT id as job_id, handler, status, insert_time, start_time,
+    query = """SELECT id as job_id, handler_path, status, insert_time, start_time,
                     completion_time,
                     IF(completion_time <> '0000-00-00 00:00:00',
                         timediff(completion_time, start_time),
                         'ITS RUNNING FOOL') as run_time
                FROM work_queue_job
-               WHERE handler like '%{}%'
+               WHERE handler_path like '%{}%'
                ORDER BY insert_time desc
                LIMIT {}""".format(handler, num)
 
