@@ -66,7 +66,7 @@ def watchdog_orphans(body):
             continue
 
         version = match.group('version')
-        if not version_host_list_map[version]:
+        if version not in version_host_list_map:
             version_host_list_map[version] = []
         version_host_list_map[version].append(host)
 
