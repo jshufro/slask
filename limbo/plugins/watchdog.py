@@ -78,7 +78,7 @@ def watchdog_orphans(body):
     if len(version_host_list_map) == 1:
         output += "No orphans!"
     else:
-        output += "Orphans:\n"
+        output += "\nOrphans:\n"
 
     for version, host_list in version_host_list_map.iteritems():
         if version != max_version:
