@@ -80,7 +80,7 @@ def watchdog_orphans(body):
     else:
         output += "Orphans:\n"
 
-    for version, host_list in version_host_list_map:
+    for version, host_list in version_host_list_map.iteritems():
         if version != max_version:
             host_list_str = "\n".join(host_list)
             output += "\nVersion: {v}\nHosts:\n{h}".format(v=version, h=host_list_str)
