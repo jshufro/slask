@@ -148,7 +148,7 @@ def orphans(body):
         if version > max_version:
             max_version = version
 
-    output += "Latest version:{}\n".format(max_version)
+    output += "Latest version: {}\n".format(max_version)
 
     if len(version_host_list_map) == 1:
         output += "No orphans!"
