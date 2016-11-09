@@ -241,11 +241,12 @@ def job_logs(body):
 
 
 def lazy_host(body):
-    query = """SELECT t1.host FROM (SELECT DISTINCT(host) FROM optimization.work_queue_task) t1
-            LEFT JOIN (select host, max(insert_time) from optimization.work_queue_task
-            WHERE status = 'running' GROUP BY 1) t2
-            ON t1.host = t2.host WHERE t2.host IS NULL
-            ORDER BY 1
+    query = """select t.host from (
+            select distinct host,
+            max(case when insert_time >= now() - interval 2 day then insert_time else 0 end) as max_time
+            from optimization.work_queue_task
+            WHERE status = 'running' GROUP BY 1) t
+            where t.max_time = 0
             ;"""
 
     if not body.startswith('!lazyhost'):
