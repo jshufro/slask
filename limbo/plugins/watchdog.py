@@ -126,7 +126,12 @@ def orphans(body):
 
             worker_str = "\n".join(worker_bees)
             lazy_str = "\n".join(funemployed)
-            output += "\nVersion: {v}\nWorker Bees:\n{w}\n\nLazy Hosts:\n{l}\n".format(v=version, w=worker_str, l=lazy_str)
+            output += "\nVersion: {}".format(version)
+            if worker_str:
+                output += "\nWorker Bees:\n{}".format(worker_str)
+            if lazy_str:
+                output += "\nLazy Bums:\n{}".format(lazy_str)
+            output += "\n"
     return "```%s```" % output
 
 
