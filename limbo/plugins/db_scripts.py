@@ -244,14 +244,13 @@ def lazy_host(body):
     if not body.startswith('!lazyhost'):
         return False
 
-    query = """select x.host from (
-            select distinct t.host,
-            max(case when t.insert_time >= now() - interval 1 day then t.insert_time else 0 end) as max_time
+    query = """select distinct host
+            from work_queue_task
+            where host not in (select t.host
             from optimization.work_queue_task t
             join work_queue_job_cache jc
             on jc.deleted = 0 and t.job_id = jc.job_id
-            WHERE t.status = 'running' GROUP BY 1) x
-            where x.max_time = 0
+            WHERE t.status = 'running') order by 1
             ;"""
 
     command_str = 'echo "' + query + '" | ' + DB
