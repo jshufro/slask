@@ -111,7 +111,7 @@ def orphans(body):
     if len(version_host_list_map) == 1:
         output += "No orphans!"
     else:
-        output += "\nOrphans:\n"
+        output += "\n"
 
     lazy_host_list = orphans_get_lazy_hosts()
 

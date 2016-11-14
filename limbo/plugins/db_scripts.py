@@ -1,6 +1,5 @@
 """!job cache <failed>: show cached/running jobs <recent failed jobs>
 !last[ jobs] [X=5] [handler]: last X scheduled jobs
-!scheduler log <querystring> : grep scheduler log
 !host <number|host_name|regex> : list tasks running on matching host(s)
 !job logs <job_id> : logs for all tasks of this job
 !task logs <task_id>: fetch task logs
@@ -275,7 +274,7 @@ def grep_scheduler_log(body):
 
 
 ALL = [job_cache, tasks, host_tasks, last_run_jobs,
-       task_logs, job_logs, grep_scheduler_log, overspend, lazy_host, job_search]
+       task_logs, job_logs, overspend, lazy_host, job_search]
 
 
 def on_message(msg, server):
