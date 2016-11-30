@@ -129,7 +129,7 @@ def orphans(body):
             lazy_str = "\n".join(funemployed)
             output += "\nVersion: {}".format(version)
             if worker_str:
-                output += "\nWorker Bees:\n{}".format(worker_str)
+                output += "\nWu-Tang Killah Bees:\n{}".format(worker_str)
             if lazy_str:
                 output += "\nLazy Bums:\n{}".format(lazy_str)
             output += "\n"
