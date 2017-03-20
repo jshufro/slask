@@ -17,6 +17,8 @@ nagios_user = conf.nagios_user
 nagios_pass = conf.nagios_pass
 
 BASE_URL = "https://multimonitor.nym2.adnxs.net/check_mk/view.py?_do_confirm=yes&_transid=-1&_do_actions=yes&actions=yes&filled_in=actions&view_name=service&service={service}&host={host}&output_format=json"
+BASE_VIEW_URL = "https://multimonitor.nym2.adnxs.net/check_mk/view.py?_do_confirm=yes&_transid=-1&_do_actions=yes&actions=yes&filled_in=actions&view_name={view_name}&output_format=json"
+ZK_WARN_VIEW = "allopt_zk_warn" 
 FAKE_OK = "&_fake_0=OK"
 DOWNTIME = "&_down_from_now=From+now+for&_down_minutes={dur}&_down_comment={comment}"
 
@@ -50,6 +52,14 @@ def set_downtime(text):
         pass
     url = BASE_URL + DOWNTIME
     url = url.format(host=host, service=service, dur=duration, comment=comment)
+    return make_request(url)
+
+def ok_etl_opt_zk_warn(text):
+    match = re.match(r"^!fakeokzk\s?", text, re.IGNORECASE)
+    if not match:
+        return False
+    url = BASE_VIEW_URL + FAKE_OK
+    url = url.format(view_name=ZK_WARN_VIEW)
     return make_request(url)
 
 def ok_etl_opt_80(text):
@@ -141,4 +151,4 @@ def status(text):
 
 def on_message(msg, server):
     text = msg.get("text", "")
-    return set_downtime(text) or opt_status(text) or ok_etl_opt_80(text) or fake_ok(text) or status(text)
+    return set_downtime(text) or opt_status(text) or ok_etl_opt_80(text) or fake_ok(text) or status(text) or ok_etl_opt_zk_warn(text)
