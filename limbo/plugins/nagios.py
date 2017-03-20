@@ -30,7 +30,9 @@ def make_request(url):
     if response.status_code != 200:
         return "Error"
     # For some reason this URL does not return nice json...
-    if response.content.startswith("MESSAGE: Successfully sent 1 commands."):
+    response_text = response.content
+    match = re.match(r"^MESSAGE: Successfully sent \d+ commands.", response_text)
+    if match:
         return "Success"
     else:
         return "Problem - look at check_mk"
