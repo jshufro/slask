@@ -10,6 +10,7 @@ import requests
 import shlex
 from requests.auth import HTTPBasicAuth
 from limbo import conf
+from collections import defaultdict
 
 
 nagios_user = conf.nagios_user
