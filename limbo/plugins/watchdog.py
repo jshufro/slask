@@ -89,50 +89,53 @@ def orphans(body):
     data = eval(response.text)
     output = ""
     max_version = ""
-    version_host_list_map = {}
+    state_set = set()
+    # map of maps {version -> {state -> [(appname, host)]}}
+    version_state_host_list_map = defaultdict(lambda: defaultdict(list))
     for i in data:
         # status = i[0]
         host = i[1]
         message = i[2]
-        match = re.match(r'(.*)version:(?P<version>.*)]:(.*)', message, re.IGNORECASE)
-        if not match:
-            continue
+        matches = re.finditer(r'r"(?P<appname>\S*)\[pid:(\S*), version:(?P<version>\S*), state:(?P<state>\S*)]"', \
+                                message, re.IGNORECASE)
+        for match in matches:
+            appname = match.group('appname')
+            version = match.group('version')
+            state = match.group('state')
+            state_set.add(state)
+            version_state_host_list_map[version][state].append((appname, host))
 
-        version = match.group('version')
-        if version not in version_host_list_map:
-            version_host_list_map[version] = []
-        version_host_list_map[version].append(host)
-
-        if version > max_version:
-            max_version = version
+            if version > max_version:
+                max_version = version
 
     output += "Latest version: {}\n".format(max_version)
-
-    if len(version_host_list_map) == 1:
+    if 'RESTARTING' not in state_set and len(version_state_host_list_map) == 1:
         output += "No orphans!"
     else:
         output += "\n"
 
     lazy_host_list = orphans_get_lazy_hosts()
 
-    for version, host_list in version_host_list_map.iteritems():
-        if version != max_version:
-            worker_bees = []
-            funemployed = []
-            for host in host_list:
-                if host in lazy_host_list:
-                    funemployed.append(host)
-                else:
-                    worker_bees.append(host)
+    for version, state_host_list_map in version_state_host_list_map.iteritems():
+        for state, appname_host_list in state_host_list_map.iteritems():
+            if state == 'RESTARTING':
+                worker_bees = []
+                funemployed = []
+                for appname, host in appname_host_list:
+                    appname_host_str = appname + " - " + host
+                    if host in lazy_host_list:
+                        funemployed.append(appname_host_str)
+                    else:
+                        worker_bees.append(appname_host_str)
 
-            worker_str = "\n".join(worker_bees)
-            lazy_str = "\n".join(funemployed)
-            output += "\nVersion: {}".format(version)
-            if worker_str:
-                output += "\nWu-Tang Killah Bees:\n{}".format(worker_str)
-            if lazy_str:
-                output += "\nLazy Bums:\n{}".format(lazy_str)
-            output += "\n"
+                worker_str = "\n".join(worker_bees)
+                lazy_str = "\n".join(funemployed)
+                output += "\nVersion: {}".format(version)
+                if worker_str:
+                    output += "\nWu-Tang Killah Bees:\n{}".format(worker_str)
+                if lazy_str:
+                    output += "\nLazy Bums:\n{}".format(lazy_str)
+                output += "\n"
     return "```%s```" % output
 
 
