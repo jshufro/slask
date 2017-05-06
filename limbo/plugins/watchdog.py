@@ -96,7 +96,7 @@ def orphans(body):
         # status = i[0]
         host = i[1]
         message = i[2]
-        matches = re.finditer(r'r"(?P<appname>\S*)\[pid:(\S*), version:(?P<version>\S*), state:(?P<state>\S*)]"', \
+        matches = re.finditer(r"(?P<appname>\S*)\[pid:(\S*), version:(?P<version>\S*), state:(?P<state>\S*)]", \
                                 message, re.IGNORECASE)
         for match in matches:
             appname = match.group('appname')
@@ -116,26 +116,33 @@ def orphans(body):
 
     lazy_host_list = orphans_get_lazy_hosts()
 
-    for version, state_host_list_map in version_state_host_list_map.iteritems():
-        for state, appname_host_list in state_host_list_map.iteritems():
-            if state == 'RESTARTING':
+    for version, state_host_list_map in sorted(version_state_host_list_map.iteritems(), reverse=True):
+        version_output = "\nVersion: {}\n".format(version)
+        state_output_list = []
+        for state, appname_host_list in sorted(state_host_list_map.iteritems()):
+            state_output = "\tState: {}".format(state)
+            if version != max_version or state == 'RESTARTING':
                 worker_bees = []
                 funemployed = []
                 for appname, host in appname_host_list:
-                    appname_host_str = appname + " - " + host
+                    appname_host_str = "\t\t{0:25} {1}".format(appname, host)
                     if host in lazy_host_list:
                         funemployed.append(appname_host_str)
                     else:
                         worker_bees.append(appname_host_str)
 
-                worker_str = "\n".join(worker_bees)
-                lazy_str = "\n".join(funemployed)
-                output += "\nVersion: {}".format(version)
-                if worker_str:
-                    output += "\nWu-Tang Killah Bees:\n{}".format(worker_str)
-                if lazy_str:
-                    output += "\nLazy Bums:\n{}".format(lazy_str)
-                output += "\n"
+                init_string = "\t\t{0:25} {1}\n".format('Application', 'Host')
+                if worker_bees:
+                    worker_str = init_string + "\n".join(worker_bees)
+                    state_output += "\n\t\tWu-Tang Killah Bees:\n{}".format(worker_str)
+                if funemployed:
+                    lazy_str = init_string + "\n".join(funemployed)
+                    state_output += "\n\t\tLazy Bums:\n\{}".format(lazy_str)
+                state_output_list.append(state_output)
+
+        if state_output_list:
+            output += version_output
+            output += "\n".join(state_output_list) + "\n"
     return "```%s```" % output
 
 
