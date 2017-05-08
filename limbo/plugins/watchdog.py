@@ -126,19 +126,19 @@ def orphans(body):
                 worker_bees = []
                 funemployed = []
                 for appname, host in appname_host_list:
-                    appname_host_str = "\t\t{0:25} {1}".format(appname, host)
+                    appname_host_str = "\t\t\t{0:25} {1}".format(appname, host)
                     if host in lazy_host_list:
                         funemployed.append(appname_host_str)
                     else:
                         worker_bees.append(appname_host_str)
 
-                init_string = "\t\t{0:25} {1}\n".format('Application', 'Host')
+                init_string = "\t\t\t{0:25} {1}\n".format('Application', 'Host')
                 if worker_bees:
                     worker_str = init_string + "\n".join(worker_bees)
                     state_output += "\n\t\tWu-Tang Killah Bees:\n{}".format(worker_str)
                 if funemployed:
                     lazy_str = init_string + "\n".join(funemployed)
-                    state_output += "\n\t\tLazy Bums:\n\{}".format(lazy_str)
+                    state_output += "\n\t\tLazy Bums:\n{}".format(lazy_str)
                 state_output_list.append(state_output)
 
         if state_output_list:
