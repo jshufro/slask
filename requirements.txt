@@ -29,4 +29,4 @@ parsedatetime
 textblob
 slackrtm==0.2.1
 imgurpython
-puzcw==0.0.11
+puzcw==0.0.12
